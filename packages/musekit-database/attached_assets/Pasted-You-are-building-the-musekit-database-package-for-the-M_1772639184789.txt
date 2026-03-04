@@ -1,0 +1,74 @@
+You are building the @musekit/database package for the MuseKit SaaS platform.
+
+This module provides the Supabase client code and TypeScript types for an 
+EXISTING database. The database already exists in Supabase with all tables 
+created. You are NOT creating tables — you are writing the code layer to 
+interact with them.
+
+## What to Build
+
+### Supabase Clients (src/client.ts)
+- createBrowserClient() — for client-side React components
+- createServerClient(cookieStore) — for Next.js server components and API routes
+- createAdminClient() — using service role key for admin operations
+- Uses @supabase/ssr and @supabase/supabase-js
+
+### Database Types (src/schema.ts)
+TypeScript types matching these existing Supabase tables:
+
+Core tables:
+- profiles (id, email, full_name, avatar_url, role, created_at, updated_at)
+- organizations (id, name, slug, owner_id, created_at)
+- team_members (id, org_id, user_id, role, joined_at)
+- team_invitations (id, org_id, email, role, invited_by, token, expires_at, accepted_at)
+- subscriptions (id, user_id, stripe_customer_id, stripe_subscription_id, plan, status, current_period_end, created_at)
+- audit_logs (id, user_id, action, resource_type, resource_id, metadata, ip_address, created_at)
+- notifications (id, user_id, type, title, message, read, created_at)
+- brand_settings (id, app_name, logo_url, primary_color, accent_color, hero_style, header_bg, header_text, footer_bg, footer_text, updated_at)
+- feature_toggles (id, key, label, description, enabled, updated_at)
+- content_posts (id, title, slug, content, status, author_id, published_at, created_at)
+- waitlist (id, email, created_at)
+- feedback (id, user_id, message, nps_score, created_at)
+- webhook_configs (id, url, secret, enabled, events, created_at)
+- email_templates (id, name, subject, body, variables, updated_at)
+- api_keys (id, service, key_encrypted, source, created_at)
+
+Extension tables (PassivePost):
+- social_posts (id, user_id, content, platforms, status, scheduled_at, published_at, created_at)
+- social_accounts (id, user_id, platform, account_name, access_token, refresh_token, connected_at, validated_at)
+- brand_preferences (id, user_id, business_niche, brand_tone, target_audience, location, posting_goals, posting_frequency, sample_urls, created_at)
+- social_analytics (id, post_id, platform, likes, shares, comments, reach, impressions, recorded_at)
+- post_queue (id, user_id, post_id, position, scheduled_at)
+
+### Query Helpers (src/queries.ts)
+Reusable query functions:
+- getUserById(id), getUserByEmail(email)
+- getOrganization(id), getOrgMembers(orgId)
+- getSubscription(userId)
+- getNotifications(userId, unreadOnly?)
+- getAuditLogs(filters), createAuditLog(entry)
+- getBrandSettings(), updateBrandSettings(settings)
+- getFeatureToggles(), updateFeatureToggle(key, enabled)
+
+### Migration Documentation (src/migrations/)
+SQL files documenting the existing schema (for reference only — do NOT run these 
+against the live database). These serve as documentation of what exists.
+
+### Dependencies
+- Install: @musekit/shared (from github:SpeckledDarth/musekit-shared)
+- Install: @supabase/supabase-js, @supabase/ssr
+
+### Supabase Connection
+- Uses environment secrets: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+- The database already exists — do NOT create or modify tables
+- Test queries against the real Supabase project to verify types match
+
+### Reference Code
+The original implementation is at github.com/SpeckledDarth/master-saas-muse
+Look in: src/lib/supabase/, migrations/core/, migrations/extensions/, src/types/database.ts
+
+### Rules
+- Export everything from src/index.ts
+- Create replit.md and MODULE.md
+- Do NOT modify the existing Supabase database schema
+- Types must exactly match the existing tables

@@ -1,0 +1,23 @@
+{
+  "name": "@musekit/database",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Supabase client code, schema types, and query helpers for the MuseKit SaaS platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@musekit/shared": "github:SpeckledDarth/musekit-shared",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.98.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.35",
+    "typescript": "^5.9.3"
+  }
+}

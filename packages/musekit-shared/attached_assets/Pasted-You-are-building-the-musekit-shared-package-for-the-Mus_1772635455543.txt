@@ -1,0 +1,46 @@
+You are building the @musekit/shared package for the MuseKit SaaS platform.
+
+This is a standalone npm package that provides shared types, utilities, and 
+configuration used by every other module in the system.
+
+## What to Build
+
+### TypeScript Types (src/types.ts)
+Export these interfaces:
+- User: id, email, name, avatar_url, role (admin/member/viewer), created_at, updated_at
+- Organization: id, name, slug, owner_id, created_at
+- TeamMember: id, org_id, user_id, role, joined_at
+- Subscription: id, user_id, stripe_customer_id, stripe_subscription_id, plan, status (active/canceled/past_due/trialing), current_period_end
+- AuditLogEntry: id, user_id, action, resource_type, resource_id, metadata, ip_address, created_at
+- Notification: id, user_id, type, title, message, read, created_at
+- BrandSettings: app_name, logo_url, primary_color, accent_color, hero_style, header_bg, header_text, footer_bg, footer_text
+- FeatureToggle: id, key, label, description, enabled
+- NavItem: title, href, icon, badge, children, roles
+- AppConfig: name, description, url, support, billing, features
+
+### Utility Functions (src/utils.ts)
+- cn(...inputs) — Tailwind class merger using clsx + tailwind-merge
+- formatCurrency(amount, currency) — Money formatting
+- formatDate(date) — Date formatting (e.g., "Mar 4, 2026")
+- slugify(text) — URL slug generation
+- truncate(str, length) — Text truncation with ellipsis
+- generateId() — UUID generation
+
+### Configuration (src/config.ts)
+- APP_CONFIG object with app name, description, URL, support email, billing provider, feature flags
+
+### Package Setup
+- name: "@musekit/shared"
+- Install: clsx, tailwind-merge
+- Create replit.md describing this module
+- Create MODULE.md listing all exports
+
+### Reference Code
+The original implementation is at github.com/SpeckledDarth/master-saas-muse
+Look in: src/lib/utils.ts, src/types/, src/lib/config.ts
+
+### Rules
+- Do NOT add any dependencies beyond clsx and tailwind-merge
+- Do NOT connect to any database or API
+- Export everything from src/index.ts
+- This module must have ZERO side effects — it's pure types and functions

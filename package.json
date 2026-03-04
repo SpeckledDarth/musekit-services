@@ -1,0 +1,37 @@
+{
+  "name": "@musekit/services",
+  "version": "0.1.0",
+  "description": "Backend services package for the MuseKit SaaS platform — notifications, webhooks, AI provider, and background jobs.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node scripts/dev-server.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["musekit", "services", "notifications", "webhooks", "ai", "jobs"],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "dependencies": {
+    "@musekit/shared": "file:./packages/musekit-shared",
+    "@musekit/database": "file:./packages/musekit-database",
+    "@supabase/supabase-js": "^2.98.0",
+    "@upstash/redis": "^1.36.3",
+    "bullmq": "^5.70.1",
+    "lucide-react": "^0.577.0",
+    "openai": "^6.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.6.3"
+  }
+}

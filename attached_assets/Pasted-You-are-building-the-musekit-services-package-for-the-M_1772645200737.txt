@@ -1,0 +1,107 @@
+You are building the @musekit/services package for the MuseKit SaaS platform.
+
+This is a standalone npm package that bundles four backend subsystems:
+notifications, webhooks, AI provider, and background jobs.
+
+## Tech Stack Rules
+- Next.js 14.2.18 (do NOT use 15+ or 16+ features)
+- React 18.3.1
+- Tailwind CSS v3.4.x (do NOT upgrade to v4)
+- TypeScript strict mode
+
+## What to Build
+
+### Notifications Subsystem (src/notifications/)
+
+#### Server-side (src/notifications/server.ts)
+- createNotification(userId, type, title, message) — insert into DB
+- getUnreadCount(userId) — count unread notifications
+- markAllRead(userId) — mark all as read
+- getNotifications(userId, options?) — paginated list
+
+#### Client-side Components (src/notifications/components.tsx)
+- NotificationBell — bell icon with unread count badge
+- NotificationPopover — dropdown showing recent notifications with type-specific icons
+- Uses auto-polling to check for new notifications
+
+### Webhooks Subsystem (src/webhooks/)
+
+#### Webhook Dispatcher (src/webhooks/dispatcher.ts)
+- dispatchWebhook(event, payload) — fire webhook for an event
+- 8 event types: feedback_submitted, waitlist_entry, subscription_created, subscription_updated, subscription_canceled, team_invitation_sent, team_member_joined, contact_form_submitted
+- HMAC-SHA256 payload signing using webhook secret
+- Fire-and-forget delivery with retry logic (3 retries, exponential backoff)
+
+#### Webhook Config (src/webhooks/config.ts)
+- getWebhookConfig() — read webhook URL, secret, enabled events from DB
+- updateWebhookConfig(config) — save webhook settings
+- validateWebhookUrl(url) — verify URL is reachable
+
+### AI Provider Subsystem (src/ai/)
+
+#### Provider Abstraction (src/ai/provider.ts)
+- createAIProvider(config) — factory that returns provider based on config
+- Supports: xAI Grok (XAI_API_KEY), OpenAI, Anthropic
+- chatCompletion(messages, options?) — non-streaming response
+- streamChatCompletion(messages, options?) — streaming response
+
+#### AI Configuration (src/ai/config.ts)
+- getAIConfig() — read provider, model, temperature, max tokens, system prompt from DB
+- updateAIConfig(config) — save AI settings
+
+#### Help Widget (src/ai/help-widget.tsx)
+- HelpWidget component — floating AI chat button
+- Configurable system prompt and fallback email
+- NPS rating collection after AI responses
+- Independently toggleable via feature_toggles
+
+### Background Jobs Subsystem (src/jobs/)
+
+#### Queue Setup (src/jobs/queue.ts)
+- Initialize BullMQ with Upstash Redis connection
+- createQueue(name) — create a named queue
+- addJob(queue, data, options?) — add job with optional delay/retry
+
+#### 6 Core Job Processors (src/jobs/processors.ts)
+- emailDelivery — process queued email sends
+- webhookRetry — retry failed webhook deliveries
+- reportGeneration — generate scheduled reports
+- metricsReport — compile and send KPI reports
+- metricsAlert — check thresholds and send alerts
+- tokenRotation — automated API token rotation
+
+#### Rate Limiting (src/jobs/rate-limiter.ts)
+- createRateLimiter(config) — sliding window algorithm using Upstash Redis
+- checkRateLimit(key, limit, window) — returns allowed/denied
+- In-memory fallback when Redis is unavailable
+
+### Dependencies
+- Install: @musekit/shared (from github:SpeckledDarth/musekit-shared)
+- Install: @musekit/database (from github:SpeckledDarth/musekit-database)
+- Install: bullmq, @upstash/redis, openai, lucide-react
+
+### Supabase Tables Used
+- notifications (read/write — notification CRUD)
+- webhook_configs (read/write — webhook settings)
+- feature_toggles (read — AI enable/disable, help widget toggle)
+- api_keys (read — AI provider key lookup)
+- audit_logs (write — log webhook dispatches)
+
+### Environment Secrets Needed
+- XAI_API_KEY
+- UPSTASH_REDIS_REST_URL
+- UPSTASH_REDIS_REST_TOKEN
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
+
+### Reference Code
+Original: github.com/SpeckledDarth/master-saas-muse
+Look in: src/lib/notifications/, src/components/notifications/, src/lib/webhooks/, src/lib/ai/, src/lib/jobs/, src/lib/queue/, src/lib/rate-limit/
+
+### Rules
+- Export everything from src/index.ts
+- Create replit.md and MODULE.md
+- NotificationBell and HelpWidget use @musekit/design-system is NOT a dependency — use lucide-react for icons and basic HTML/Tailwind for UI
+- The AI provider must be pluggable — never hardcode a specific provider
+- Rate limiter MUST have in-memory fallback (do not crash if Redis is down)
