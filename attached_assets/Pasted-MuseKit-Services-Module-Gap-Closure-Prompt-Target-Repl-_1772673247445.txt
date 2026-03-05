@@ -1,0 +1,140 @@
+MuseKit Services Module — Gap Closure Prompt
+Target Repl: musekit-services (isolated services module Repl) Package: packages/services/ Stack: TypeScript, OpenAI SDK (used for all providers via baseURL), Supabase GitHub: SpeckledDarth/musekit-services (to be created)
+
+Existing Code Context
+Before starting, understand what already exists in this package:
+
+AI Provider (src/ai/provider.ts)
+Creates an AI provider that wraps the OpenAI SDK with configurable base URLs for different providers:
+
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+export interface ChatCompletionOptions {
+  temperature?: number;
+  max_tokens?: number;
+  model?: string;
+}
+export interface AIProvider {
+  chatCompletion(messages: ChatMessage[], options?: ChatCompletionOptions): Promise<string>;
+  streamChatCompletion(messages: ChatMessage[], options?: ChatCompletionOptions): AsyncGenerator<string, void, unknown>;
+}
+export async function createAIProvider(config: AIConfig): Promise<AIProvider>
+The createAIProvider function:
+
+Takes an AIConfig object
+Creates an OpenAI client with the appropriate base URL
+Supports 3 providers via base URL switching:
+xAI (Grok): https://api.x.ai/v1 — default model grok-3
+OpenAI: https://api.openai.com/v1 — default model gpt-4o
+Anthropic: https://api.anthropic.com/v1 — default model claude-sonnet-4-20250514
+Returns an object with chatCompletion() and streamChatCompletion() methods
+AI Config (src/ai/config.ts)
+Reads AI configuration from the feature_toggles Supabase table:
+
+export interface AIConfig {
+  provider: "xai" | "openai" | "anthropic";
+  model?: string;
+  temperature?: number;
+  max_tokens?: number;
+  systemPrompt?: string;
+}
+export async function getAIConfig(): Promise<AIConfig>
+export async function getAIApiKey(provider: string): Promise<string>
+export async function updateAIConfig(config: Partial<AIConfig>): Promise<void>
+getAIConfig() reads from feature_toggles table where key = 'ai_config'
+getAIApiKey() reads env vars: XAI_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY
+Falls back to defaults if no config is saved (provider: "xai", temperature: 0.7, max_tokens: 2048)
+HelpWidget (src/ai/help-widget.tsx)
+A floating chat widget component. Key detail — it receives onSendMessage as a prop:
+
+interface HelpWidgetProps {
+  systemPrompt?: string;
+  fallbackEmail?: string;
+  onSendMessage: (messages: { role: string; content: string }[]) => Promise<string>;
+  onNpsRating?: (rating: number) => void;
+  enabled?: boolean;
+}
+The widget does NOT call any API directly. It delegates to the onSendMessage callback, which the consuming application must provide. This callback receives the full message history and should return the AI's reply as a string.
+
+AI Barrel (src/ai/index.ts)
+Re-exports everything from provider.ts, config.ts, and help-widget.tsx.
+
+Package Barrel (src/index.ts)
+Exports from: notifications, webhooks, ai, and jobs (BullMQ queues/workers).
+
+BullMQ Warning: The jobs module imports child_process indirectly. Client-side code must NEVER import from the package barrel. Use deep imports like @musekit/services/src/ai/help-widget for browser-safe imports.
+
+Deliverable: AI Chat Handler Function (#21) — MEDIUM
+File to create: src/ai/chat-handler.ts Also update: src/ai/index.ts (add export), src/index.ts (add export)
+
+What It Does
+A server-side function that accepts a chat message (plus optional history), loads the AI config, creates the provider, calls chatCompletion(), and returns the reply string. This function is what an API route calls — it contains the business logic so the API route stays thin.
+
+Requirements
+Function Signature:
+
+export interface ChatRequest {
+  message: string;
+  history?: ChatMessage[];
+  systemPrompt?: string;
+}
+export interface ChatResponse {
+  reply: string;
+  provider: string;
+  model: string;
+}
+export async function handleChatMessage(request: ChatRequest): Promise<ChatResponse>
+Implementation Flow:
+
+Call getAIConfig() to load the current AI configuration
+Call createAIProvider(config) to get the provider
+Build the messages array:
+System message first (from request.systemPrompt or config.systemPrompt or a sensible default like "You are a helpful support assistant for a SaaS application.")
+Then any history messages from request.history
+Then the new user message from request.message
+Call provider.chatCompletion(messages)
+Return { reply, provider: config.provider, model: config.model || defaultModel }
+Error Handling:
+
+If getAIConfig() fails, use default config (provider: "xai")
+If getAIApiKey() returns empty/undefined (no API key configured), return a helpful fallback:
+{
+  reply: "AI chat is not configured yet. Please ask an administrator to add an AI API key in the admin settings.",
+  provider: "none",
+  model: "none"
+}
+If the AI provider call fails (network error, invalid key, rate limit), catch the error and return:
+{
+  reply: "I'm having trouble connecting right now. Please try again in a moment, or contact support if the issue persists.",
+  provider: config.provider,
+  model: config.model || "unknown"
+}
+Log errors to console.error with context (provider, model, error message) for server-side debugging
+No Dependencies on Next.js:
+
+This function must NOT import anything from next/*
+It is a pure TypeScript function that can be called from any server-side context
+No "use client" directive — this is server-side only
+Imports:
+
+Use relative imports within the package: ./provider, ./config
+Do NOT use @/ aliases
+Testing Notes
+In the module Repl, you can test this function by:
+
+Setting XAI_API_KEY (or OPENAI_API_KEY or ANTHROPIC_API_KEY) as an environment variable
+Creating a simple test script that calls handleChatMessage({ message: "Hello" })
+Verifying it returns a reply from the AI provider
+Testing the fallback by NOT setting any API key and verifying the helpful fallback message
+Acceptance Criteria
+handleChatMessage() function exists in src/ai/chat-handler.ts
+Function loads AI config, creates provider, sends messages, returns reply
+Graceful fallback when no API key is configured (no crash, user-friendly message)
+Graceful fallback when AI provider call fails (no crash, user-friendly message)
+Function is exported from src/ai/index.ts and src/index.ts
+No Next.js dependencies — pure TypeScript function
+No @/ aliases — relative imports only
+TypeScript compiles without errors
+No new npm dependencies needed (OpenAI SDK already installed)
