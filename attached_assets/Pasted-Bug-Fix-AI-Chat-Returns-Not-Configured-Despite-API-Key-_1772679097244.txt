@@ -1,0 +1,200 @@
+Bug Fix: AI Chat Returns "Not Configured" Despite API Key Being Set — MEDIUM
+You are working in the musekit-services Repl, which contains the @musekit/services package. This package provides backend services for a SaaS platform — AI chat, background jobs (BullMQ), notifications, and webhooks.
+
+Stack: TypeScript, OpenAI SDK (used for all providers via baseURL), @musekit/database (Supabase client), BullMQ, Upstash Redis.
+
+The Problem
+The handleChatMessage() function always returns the fallback message "AI chat is not configured yet" even when the XAI_API_KEY environment variable is set. The function should detect the env var and use it to call the xAI API, but instead it falls through to a database lookup that fails.
+
+Root Cause
+File: src/ai/config.ts — function getAIApiKey() (lines 78-117)
+
+The function checks process.env.XAI_API_KEY first (line 80). If the env var exists, it returns immediately. If not, it falls through to query an api_keys database table. If that table is empty or the query fails for any reason, the function throws. The caller (handleChatMessage) catches the throw and returns the "not configured" fallback.
+
+The env var check at line 80 should short-circuit the entire flow. But at runtime, process.env.XAI_API_KEY appears to be undefined despite being configured as a secret in the hosting environment. This is the primary issue to diagnose. Additionally, the database fallback has no error handling — if the table is empty, unreachable, or has a schema mismatch, it throws an unrecoverable error with no logging, making root cause diagnosis impossible.
+
+Current code — src/ai/config.ts (the problematic function):
+
+export async function getAIApiKey(provider: AIConfig["provider"]): Promise<string> {
+  if (provider === "xai") {
+    const key = process.env.XAI_API_KEY;
+    if (key) return key;             // <-- should return here, but env var appears undefined
+  }
+  if (provider === "openai") {
+    const key = process.env.OPENAI_API_KEY;
+    if (key) return key;
+  }
+  if (provider === "anthropic") {
+    const key = process.env.ANTHROPIC_API_KEY;
+    if (key) return key;
+  }
+  // Falls through to database lookup — table doesn't exist, throws
+  const supabase = createAdminClient();
+  const providerServiceMap: Record<string, string> = {
+    xai: "xai",
+    openai: "openai",
+    anthropic: "anthropic",
+  };
+  const service = providerServiceMap[provider];
+  if (!service) throw new Error(`Unknown AI provider: ${provider}`);
+  const { data, error } = await supabase
+    .from("api_keys")
+    .select("key_encrypted")
+    .eq("service", service)
+    .single();
+  if (error || !data) {
+    throw new Error(
+      `No API key found for provider ${provider}. Set the env var or add it to api_keys table.`
+    );
+  }
+  return (data as { key_encrypted: string }).key_encrypted;
+}
+Current code — src/ai/chat-handler.ts (the caller):
+
+export async function handleChatMessage(
+  request: ChatRequest
+): Promise<ChatResponse> {
+  let config: AIConfig;
+  try {
+    config = await getAIConfig();
+  } catch (error) {
+    console.error("[chat-handler] Failed to load AI config, using defaults:", error);
+    config = {
+      provider: "xai",
+      model: "grok-3",
+      temperature: 0.7,
+      max_tokens: 2048,
+      system_prompt: "You are a helpful assistant.",
+    };
+  }
+  const model = config.model || getDefaultModel(config.provider);
+  try {
+    await getAIApiKey(config.provider);
+  } catch {                                    // <-- swallows error silently
+    return {
+      reply:
+        "AI chat is not configured yet. Please ask an administrator to add an AI API key in the admin settings.",
+      provider: "none",
+      model: "none",
+    };
+  }
+  // ... continues to call AI provider
+}
+What You Need To Fix
+Two changes needed:
+
+1. Add diagnostic logging and make getAIApiKey resilient to missing database tables
+File: src/ai/config.ts
+
+The database fallback in getAIApiKey should be wrapped in try/catch so a missing api_keys table doesn't crash the function. Also add logging so issues are diagnosable from server logs.
+
+export async function getAIApiKey(provider: AIConfig["provider"]): Promise<string> {
+  const envKeys: Record<string, string | undefined> = {
+    xai: process.env.XAI_API_KEY,
+    openai: process.env.OPENAI_API_KEY,
+    anthropic: process.env.ANTHROPIC_API_KEY,
+  };
+  console.log(`[getAIApiKey] Checking env var for provider "${provider}": ${!!envKeys[provider]}`);
+  const envKey = envKeys[provider];
+  if (envKey) return envKey;
+  console.warn(`[getAIApiKey] No env var found for provider "${provider}", trying database fallback...`);
+  // Env var not set — try database fallback (api_keys table)
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("api_keys")
+      .select("key_encrypted")
+      .eq("service", provider)
+      .single();
+    if (!error && data) {
+      console.log(`[getAIApiKey] Found key in database for provider "${provider}"`);
+      return (data as { key_encrypted: string }).key_encrypted;
+    }
+    if (error) {
+      console.warn(`[getAIApiKey] Database query error for provider "${provider}":`, error.message);
+    }
+  } catch (e) {
+    console.warn(`[getAIApiKey] Database lookup failed for provider "${provider}":`, e);
+  }
+  throw new Error(
+    `No API key found for provider "${provider}". Set the ${provider.toUpperCase()}_API_KEY env var or add it to the api_keys database table.`
+  );
+}
+2. Add error logging in the chat handler
+File: src/ai/chat-handler.ts
+
+The catch block that returns "not configured" currently swallows the error silently. Log it so the root cause is visible in server logs:
+
+  try {
+    await getAIApiKey(config.provider);
+  } catch (error) {
+    console.error("[chat-handler] API key check failed:", error);
+    return {
+      reply:
+        "AI chat is not configured yet. Please ask an administrator to add an AI API key in the admin settings.",
+      provider: "none",
+      model: "none",
+    };
+  }
+Other Files For Context (no changes needed)
+src/ai/config.ts — getAIConfig() function (lines 20-51): This function queries the feature_toggles table for AI config. It already has a proper outer try/catch that returns DEFAULT_AI_CONFIG when the table doesn't exist. This function works correctly — do not change it.
+
+const DEFAULT_AI_CONFIG: AIConfig = {
+  provider: "xai",
+  model: "grok-3",
+  temperature: 0.7,
+  max_tokens: 2048,
+  system_prompt: "You are a helpful assistant.",
+};
+src/ai/config.ts — AIConfig interface:
+
+export interface AIConfig {
+  provider: "xai" | "openai" | "anthropic";
+  model: string;
+  temperature: number;
+  max_tokens: number;
+  system_prompt: string;
+}
+src/ai/provider.ts — Creates an OpenAI SDK client with a custom baseURL for each provider (xAI uses https://api.x.ai/v1). This file does NOT need changes.
+
+src/ai/chat-handler.ts — The full function also handles the actual AI API call after the key check. That part works fine once the key is available.
+
+Environment Variables
+The following env vars are checked by getAIApiKey:
+
+XAI_API_KEY — for xAI/Grok provider
+OPENAI_API_KEY — for OpenAI provider
+ANTHROPIC_API_KEY — for Anthropic provider
+The following are required by createAdminClient (used in the database fallback):
+
+NEXT_PUBLIC_SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+How To Test
+Test 1 — Env var works:
+
+Set XAI_API_KEY as an environment variable with a valid xAI API key
+Call handleChatMessage({ message: "Hello, say hi back in one sentence." })
+Verify the response has provider: "xai", model: "grok-3", and reply contains an actual AI response (not the fallback message)
+Check server logs — you should see [getAIApiKey] Checking env var for provider "xai": true
+Test 2 — No key shows clear error:
+
+Remove all AI API key env vars
+Call handleChatMessage({ message: "Hello" })
+Verify the response has provider: "none", model: "none", and reply is the "not configured" fallback
+Check server logs — you should see the error logged with [chat-handler] API key check failed:
+Test 3 — Fallback message (no crash):
+
+Remove all AI API key env vars AND remove SUPABASE_SERVICE_ROLE_KEY
+Call handleChatMessage({ message: "Hello" })
+Verify it returns the fallback message without crashing (the database lookup should fail gracefully)
+Acceptance Criteria
+When XAI_API_KEY env var is set, getAIApiKey("xai") returns it immediately without touching the database
+When no env var is set, the database fallback is tried but wrapped in try/catch so missing tables don't crash
+Diagnostic logging is present: env var check result, any database errors, and the chat handler error
+handleChatMessage() returns an actual AI response when an API key is available
+handleChatMessage() returns the "not configured" fallback (no crash) when no API key is available
+getAIConfig() is NOT modified (it already works correctly)
+AIConfig interface is NOT modified
+No new npm dependencies needed
+TypeScript compiles without errors
+No @/ aliases — relative imports only
