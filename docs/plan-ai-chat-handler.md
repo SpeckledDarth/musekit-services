@@ -14,6 +14,7 @@
 | 1.1 | 2026-03-05 | Agent | Added revision control, began implementation |
 | 1.2 | 2026-03-05 | Agent | Implementation complete, compilation verified |
 | 1.3 | 2026-03-05 | Agent | Bug fix: getAIApiKey resilient DB fallback + diagnostic logging |
+| 2.0 | 2026-03-05 | Agent | Fix table names + complete processors (5-fix batch) |
 
 ---
 

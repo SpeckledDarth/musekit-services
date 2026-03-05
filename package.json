@@ -10,7 +10,14 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": ["musekit", "services", "notifications", "webhooks", "ai", "jobs"],
+  "keywords": [
+    "musekit",
+    "services",
+    "notifications",
+    "webhooks",
+    "ai",
+    "jobs"
+  ],
   "author": "",
   "license": "ISC",
   "peerDependencies": {
@@ -18,13 +25,14 @@
     "react-dom": "^18.3.1"
   },
   "dependencies": {
-    "@musekit/shared": "file:./packages/musekit-shared",
     "@musekit/database": "file:./packages/musekit-database",
+    "@musekit/shared": "file:./packages/musekit-shared",
     "@supabase/supabase-js": "^2.98.0",
     "@upstash/redis": "^1.36.3",
     "bullmq": "^5.70.1",
     "lucide-react": "^0.577.0",
-    "openai": "^6.25.0"
+    "openai": "^6.25.0",
+    "resend": "^6.9.3"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",

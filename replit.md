@@ -47,8 +47,19 @@ scripts/
 - `npm run typecheck` — Type-check without emitting
 - `npm run clean` — Remove dist/
 
+## Database Table Mapping
+Code references map to real Supabase tables as follows:
+- `settings` — key/value config store (AI config, webhook config, feature flags)
+- `config_secrets` — encrypted API keys (columns: id, key_name, encrypted_value, updated_at, updated_by)
+- `muse_product_subscriptions` — subscription data (NOT "subscriptions")
+- `profiles` — user profiles
+- `audit_logs` — audit trail (correct as-is)
+- `notifications` — notification records (correct as-is)
+- Tables that do NOT exist: `feature_toggles`, `api_keys`, `webhook_configs`
+
 ## Environment Variables (all configured as secrets)
 - `XAI_API_KEY` — xAI Grok API key
+- `RESEND_API_KEY` — Resend email delivery API key
 - `UPSTASH_REDIS_REST_URL` — Upstash Redis REST URL
 - `UPSTASH_REDIS_REST_TOKEN` — Upstash Redis REST token
 - `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
@@ -58,4 +69,4 @@ scripts/
 ## Dependencies
 - `@musekit/shared` (file: local from packages/musekit-shared)
 - `@musekit/database` (file: local from packages/musekit-database)
-- `bullmq`, `@upstash/redis`, `openai`, `lucide-react`, `@supabase/supabase-js`
+- `bullmq`, `@upstash/redis`, `openai`, `resend`, `lucide-react`, `@supabase/supabase-js`

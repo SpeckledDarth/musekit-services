@@ -1,0 +1,51 @@
+musekit-services — Fix Table Names and Complete Processors
+Context
+You are working in the musekit-services module Repl. This builds packages/services/.
+
+CRITICAL TABLE MAPPING:
+
+Code says	Real DB table
+feature_toggles	DOES NOT EXIST — use settings table (key/value; columns: id, key, value)
+api_keys	config_secrets (columns: id, key_name, encrypted_value, updated_at, updated_by)
+webhook_configs	DOES NOT EXIST
+subscriptions	muse_product_subscriptions
+Tables that are correct: audit_logs, notifications
+
+FIX 1 (Critical): AI Config — fix table references
+File: src/ai/config.ts
+
+Line 24: .from("feature_toggles") → .from("settings") Adapt the query: instead of looking for a name/enabled pattern, look for key/value pairs (e.g., key = "feature.ai_enabled", value = "true")
+
+Line 68: .from("feature_toggles") → .from("settings") (same adaptation)
+
+Line 95: .from("api_keys") → .from("config_secrets") Column mapping: code may use name/value → DB uses key_name/encrypted_value
+
+FIX 2 (Critical): Webhook Config — fix or stub
+File: src/webhooks/config.ts
+
+Lines 27, 54, 74: .from("webhook_configs") → This table doesn't exist.
+
+Options: A. Create a simple in-memory config or env-var based config for webhooks B. Store webhook configs in the settings table as JSON (key: "webhook.configs", value: JSON string of webhook array) C. Remove webhook functionality if not needed for launch
+
+FIX 3 (High): Email Delivery processor is a stub
+File: src/jobs/processors.ts (around line 54)
+
+Connect to the email package to actually send emails instead of just logging.
+
+FIX 4 (High): Report Generation processor is a stub
+File: src/jobs/processors.ts (around line 100)
+
+When querying for reports, use:
+
+.from("muse_product_subscriptions") NOT .from("subscriptions")
+.from("profiles") for user counts
+FIX 5 (Medium): Webhook dispatcher — use BullMQ for retries
+File: src/webhooks/dispatcher.ts
+
+Currently uses floating promises. Queue failed deliveries via BullMQ.
+
+Testing Checklist
+AI config loads feature flags from settings table
+API key lookup uses config_secrets table
+Email delivery job sends real email
+No references to non-existent tables

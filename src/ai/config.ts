@@ -1,5 +1,4 @@
 import { createAdminClient } from "@musekit/database";
-import type { FeatureToggleInsert } from "@musekit/database";
 
 export interface AIConfig {
   provider: "xai" | "openai" | "anthropic";
@@ -20,8 +19,8 @@ const DEFAULT_AI_CONFIG: AIConfig = {
 export async function getAIConfig(): Promise<AIConfig> {
   try {
     const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("feature_toggles")
+    const { data, error } = await (supabase
+      .from("settings") as any)
       .select("*")
       .eq("key", "ai_config")
       .single();
@@ -29,12 +28,12 @@ export async function getAIConfig(): Promise<AIConfig> {
     if (error || !data) return DEFAULT_AI_CONFIG;
 
     const row = data as Record<string, unknown>;
-    const description = row.description as string | null;
+    const value = row.value as string | null;
 
-    if (!description) return DEFAULT_AI_CONFIG;
+    if (!value) return DEFAULT_AI_CONFIG;
 
     try {
-      const parsed = JSON.parse(description) as Record<string, unknown>;
+      const parsed = JSON.parse(value) as Record<string, unknown>;
       return {
         provider: (parsed.provider as AIConfig["provider"]) || DEFAULT_AI_CONFIG.provider,
         model: (parsed.model as string) || DEFAULT_AI_CONFIG.model,
@@ -57,16 +56,12 @@ export async function updateAIConfig(
   const current = await getAIConfig();
   const merged = { ...current, ...config };
 
-  const upsertData: FeatureToggleInsert = {
-    key: "ai_config",
-    label: "AI Configuration",
-    description: JSON.stringify(merged),
-    enabled: true,
-  };
-
   const { error } = await (supabase
-    .from("feature_toggles") as any)
-    .upsert(upsertData, { onConflict: "key" });
+    .from("settings") as any)
+    .upsert(
+      { key: "ai_config", value: JSON.stringify(merged) },
+      { onConflict: "key" }
+    );
 
   if (error) {
     throw new Error(`Failed to update AI config: ${error.message}`);
@@ -91,15 +86,15 @@ export async function getAIApiKey(provider: AIConfig["provider"]): Promise<strin
 
   try {
     const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("api_keys")
-      .select("key_encrypted")
-      .eq("service", provider)
+    const { data, error } = await (supabase
+      .from("config_secrets") as any)
+      .select("encrypted_value")
+      .eq("key_name", provider)
       .single();
 
     if (!error && data) {
       console.log(`[getAIApiKey] Found key in database for provider "${provider}"`);
-      return (data as { key_encrypted: string }).key_encrypted;
+      return (data as { encrypted_value: string }).encrypted_value;
     }
 
     if (error) {
@@ -110,6 +105,6 @@ export async function getAIApiKey(provider: AIConfig["provider"]): Promise<strin
   }
 
   throw new Error(
-    `No API key found for provider "${provider}". Set the ${provider.toUpperCase()}_API_KEY env var or add it to the api_keys database table.`
+    `No API key found for provider "${provider}". Set the ${provider.toUpperCase()}_API_KEY env var or add it to the config_secrets database table.`
   );
 }
