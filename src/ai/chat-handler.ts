@@ -50,7 +50,8 @@ export async function handleChatMessage(
 
   try {
     await getAIApiKey(config.provider);
-  } catch {
+  } catch (error) {
+    console.error("[chat-handler] API key check failed:", error);
     return {
       reply:
         "AI chat is not configured yet. Please ask an administrator to add an AI API key in the admin settings.",

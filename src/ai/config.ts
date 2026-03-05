@@ -76,42 +76,40 @@ export async function updateAIConfig(
 }
 
 export async function getAIApiKey(provider: AIConfig["provider"]): Promise<string> {
-  if (provider === "xai") {
-    const key = process.env.XAI_API_KEY;
-    if (key) return key;
-  }
-
-  if (provider === "openai") {
-    const key = process.env.OPENAI_API_KEY;
-    if (key) return key;
-  }
-
-  if (provider === "anthropic") {
-    const key = process.env.ANTHROPIC_API_KEY;
-    if (key) return key;
-  }
-
-  const supabase = createAdminClient();
-  const providerServiceMap: Record<string, string> = {
-    xai: "xai",
-    openai: "openai",
-    anthropic: "anthropic",
+  const envKeys: Record<string, string | undefined> = {
+    xai: process.env.XAI_API_KEY,
+    openai: process.env.OPENAI_API_KEY,
+    anthropic: process.env.ANTHROPIC_API_KEY,
   };
 
-  const service = providerServiceMap[provider];
-  if (!service) throw new Error(`Unknown AI provider: ${provider}`);
+  console.log(`[getAIApiKey] Checking env var for provider "${provider}": ${!!envKeys[provider]}`);
 
-  const { data, error } = await supabase
-    .from("api_keys")
-    .select("key_encrypted")
-    .eq("service", service)
-    .single();
+  const envKey = envKeys[provider];
+  if (envKey) return envKey;
 
-  if (error || !data) {
-    throw new Error(
-      `No API key found for provider ${provider}. Set the env var or add it to api_keys table.`
-    );
+  console.warn(`[getAIApiKey] No env var found for provider "${provider}", trying database fallback...`);
+
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("api_keys")
+      .select("key_encrypted")
+      .eq("service", provider)
+      .single();
+
+    if (!error && data) {
+      console.log(`[getAIApiKey] Found key in database for provider "${provider}"`);
+      return (data as { key_encrypted: string }).key_encrypted;
+    }
+
+    if (error) {
+      console.warn(`[getAIApiKey] Database query error for provider "${provider}":`, error.message);
+    }
+  } catch (e) {
+    console.warn(`[getAIApiKey] Database lookup failed for provider "${provider}":`, e);
   }
 
-  return (data as { key_encrypted: string }).key_encrypted;
+  throw new Error(
+    `No API key found for provider "${provider}". Set the ${provider.toUpperCase()}_API_KEY env var or add it to the api_keys database table.`
+  );
 }
