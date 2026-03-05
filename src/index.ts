@@ -24,6 +24,7 @@ export {
   getAIConfig,
   updateAIConfig,
   getAIApiKey,
+  handleChatMessage,
   HelpWidget,
 } from "./ai";
 export type {
@@ -31,6 +32,8 @@ export type {
   ChatMessage,
   ChatCompletionOptions,
   AIConfig,
+  ChatRequest,
+  ChatResponse,
 } from "./ai";
 
 export {

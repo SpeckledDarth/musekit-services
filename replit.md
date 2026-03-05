@@ -25,6 +25,7 @@ src/
 │   └── dispatcher.ts          # HMAC-SHA256 signed webhook dispatch with retry
 ├── ai/
 │   ├── index.ts               # AI exports
+│   ├── chat-handler.ts        # Server-side chat orchestrator (handleChatMessage)
 │   ├── config.ts              # AI provider config CRUD + API key lookup
 │   ├── provider.ts            # Pluggable AI provider factory (xAI, OpenAI, Anthropic)
 │   └── help-widget.tsx        # HelpWidget React component with NPS rating
