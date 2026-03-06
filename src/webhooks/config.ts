@@ -1,17 +1,8 @@
 import { createAdminClient } from "@musekit/database";
 
-export const WEBHOOK_EVENTS = [
-  "feedback_submitted",
-  "waitlist_entry",
-  "subscription_created",
-  "subscription_updated",
-  "subscription_canceled",
-  "team_invitation_sent",
-  "team_member_joined",
-  "contact_form_submitted",
-] as const;
-
-export type WebhookEvent = (typeof WEBHOOK_EVENTS)[number];
+export { WEBHOOK_EVENTS } from "./events";
+export type { WebhookEvent } from "./events";
+import type { WebhookEvent } from "./events";
 
 export interface WebhookConfigData {
   url: string;

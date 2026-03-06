@@ -1,0 +1,105 @@
+Prompt 14: musekit-services — Webhook Management UI + Background Job Dashboard
+Module Repl
+musekit-services (GitHub: SpeckledDarth/musekit-services)
+
+Context
+The services package has backend infrastructure for webhooks (dispatcher, config, event types) and background jobs (BullMQ queue, processors, rate limiting). But there is no admin UI to manage these systems. Admins have no visibility into webhook deliveries, job failures, or system health.
+
+Part A: Webhook Management Admin Components
+Required — create webhook management components:
+WebhookList component (src/webhooks/components/WebhookList.tsx):
+
+Table of all configured webhook endpoints
+Columns: URL, Events (subscribed event types), Status (Active/Inactive), Last Delivery, Success Rate
+Column sorting on all columns
+Search by URL
+Filter by status (All / Active / Inactive) and event type
+Clickable rows → open WebhookDetail
+"Add Webhook" button → opens WebhookEditor
+WebhookEditor component (src/webhooks/components/WebhookEditor.tsx):
+
+Form fields:
+Endpoint URL (text input with URL validation)
+Description (optional text)
+Event types: checkbox list of all available events (user.created, subscription.updated, etc. — pull from existing event type definitions in config.ts)
+Secret key: auto-generated signing secret with copy button
+Active/Inactive toggle
+Save persists to settings table as key/value pairs (e.g., key=webhooks.endpoints, value=JSON array). Note: there is NO webhook_configs table in the database — webhook configuration is stored in the settings table.
+Delete with confirmation dialog
+Works for both create and edit modes
+WebhookDetail component (src/webhooks/components/WebhookDetail.tsx):
+
+Shows webhook config: URL, events, status, signing secret (masked with reveal toggle)
+Delivery history table:
+Columns: Event Type, Timestamp, HTTP Status, Response Time, Status (Success/Failed)
+Column sorting
+Filter by status (All / Success / Failed)
+Click row to expand → show request headers, request body (JSON), response body
+"Test Webhook" button — sends a test ping event to the endpoint, shows result inline
+Retry button on failed deliveries — re-dispatches the original payload
+Edit and Delete buttons
+Barrel export:
+
+Create src/webhooks/components/index.ts
+Add UI component exports to src/index.ts
+Important: these UI components must be exported separately from the BullMQ-dependent code. Create a src/components.ts or similar entry point that ONLY exports React components (no child_process / BullMQ dependencies). The integration Repl's client-side code cannot import BullMQ.
+Part B: Background Job Dashboard Components
+Required — create job monitoring components:
+JobDashboard component (src/jobs/components/JobDashboard.tsx):
+
+Overview cards: Total jobs processed (24h), Active, Completed, Failed, Waiting
+Job type breakdown: Cards or table showing each job type (email_delivery, webhook_retry, report_generation, metrics_alert) with counts and success rates
+Recent failures: Table of last 20 failed jobs with:
+Columns: Job Type, Created At, Failed At, Error Message, Attempts
+Click row to expand → show full error stack trace and job data
+Retry button on each failed job
+Auto-refresh toggle (poll every 30 seconds)
+JobDetail component (src/jobs/components/JobDetail.tsx):
+
+Full job information: ID, type, status, created_at, processed_at, completed_at/failed_at
+Job data (JSON viewer)
+Error details (if failed): error message, stack trace
+Attempt history: list of all attempts with timestamps and outcomes
+Retry button (for failed jobs)
+Cancel button (for waiting/active jobs)
+Barrel export:
+
+Create src/jobs/components/index.ts
+Export from the client-safe entry point (same note as webhooks — NO BullMQ imports in the exported component bundle)
+Part C: Integration Rules
+All UI components must use "use client" directive
+All Supabase imports must use relative paths (NOT @/)
+Use next/navigation (NOT next/router) for any routing
+Critical: UI components must NOT import BullMQ, child_process, or any Node.js-only modules. Data fetching in these components must go through API routes (fetch calls), not direct BullMQ queue access. The integration Repl renders these components in the browser.
+Export UI components from a separate barrel that doesn't pull in server-only dependencies
+STANDARD E Cross-Reference
+Apply all UX Standards from Prompt 09 STANDARD E to every component in this module:
+
+Toast notifications (sonner) on every mutation
+Empty states on every list with zero rows
+Confirmation dialogs on all destructive operations (delete webhook, cancel job)
+Dark mode (dark: classes) on all UI
+Loading skeletons on every data-fetching page
+Unsaved changes warning on every form (webhook editor)
+Form validation with inline error messages (URL validation on webhook endpoint)
+Relative timestamps with hover tooltips
+Row counts in list page titles
+Breadcrumbs on every detail/drill-down page
+Pagination (25 rows/page, page in URL)
+URL-persisted filters (search, filter, sort in query params)
+Bulk operations (checkbox column, floating action bar)
+CSV export on every list view
+Audit logging on every create/update/delete mutation
+Supabase Realtime: Webhook Delivery Status
+Subscribe to real-time updates on webhook delivery results. When an admin clicks "Test Webhook", show the delivery result (success/failure, HTTP status, response time) live without polling:
+
+Use Supabase Realtime or a simple polling mechanism (every 2s for 30s after test initiated)
+Show response headers and response body in the expanded delivery detail for debugging
+If the webhook test fails, show the error message and suggest common fixes (SSL issues, timeout, invalid URL)
+After Fix
+Push to GitHub. The integration Repl will:
+
+Create /admin/webhooks route wired to WebhookList
+Create /admin/jobs route wired to JobDashboard
+Wire API routes for webhook CRUD, delivery history, test webhook, job retry/cancel
+Update admin sidebar to include Webhooks and Jobs links

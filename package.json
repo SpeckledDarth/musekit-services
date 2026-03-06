@@ -4,6 +4,16 @@
   "description": "Backend services package for the MuseKit SaaS platform — notifications, webhooks, AI provider, and background jobs.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./components": {
+      "types": "./dist/components.d.ts",
+      "default": "./dist/components.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "node scripts/dev-server.js",
@@ -32,7 +42,8 @@
     "bullmq": "^5.70.1",
     "lucide-react": "^0.577.0",
     "openai": "^6.25.0",
-    "resend": "^6.9.3"
+    "resend": "^6.9.3",
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
