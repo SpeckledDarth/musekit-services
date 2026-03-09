@@ -16,6 +16,7 @@
 | 1.3 | 2026-03-05 | Agent | Bug fix: getAIApiKey resilient DB fallback + diagnostic logging |
 | 2.0 | 2026-03-05 | Agent | Fix table names + complete processors (5-fix batch) |
 | 3.0 | 2026-03-06 | Agent | Webhook management UI + Background job dashboard + client-safe entry point |
+| 3.1 | 2026-03-09 | Agent | CSS variable migration: replaced ~242 hardcoded Tailwind color classes with semantic CSS variable classes across 8 component files |
 
 ---
 

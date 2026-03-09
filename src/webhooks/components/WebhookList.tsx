@@ -162,7 +162,7 @@ export function WebhookList({
   const SortHeader = ({ field, label }: { field: SortField; label: string }) => (
     <th
       onClick={() => handleSort(field)}
-      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 select-none"
+      className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground select-none"
     >
       {label} {sortField === field && (sortDir === "asc" ? "\u2191" : "\u2193")}
     </th>
@@ -175,19 +175,19 @@ export function WebhookList({
       <Breadcrumbs items={defaultBreadcrumbs} />
 
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Webhooks {!loading && <span className="text-sm font-normal text-gray-500 dark:text-gray-400">({filtered.length})</span>}
+        <h1 className="text-2xl font-bold text-foreground">
+          Webhooks {!loading && <span className="text-sm font-normal text-muted-foreground">({filtered.length})</span>}
         </h1>
         <div className="flex items-center gap-3">
           <button
             onClick={handleCsvExport}
-            className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-3 py-2 text-sm text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             Export CSV
           </button>
           <button
             onClick={() => onNavigateToEditor()}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition-colors"
           >
             Add Webhook
           </button>
@@ -228,16 +228,16 @@ export function WebhookList({
           action={!search && statusFilter === "all" ? { label: "Add Webhook", onClick: () => onNavigateToEditor() } : undefined}
         />
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
+        <div className="bg-card rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted">
               <tr>
                 <th className="px-4 py-3 w-10">
                   <input
                     type="checkbox"
                     checked={pageItems.length > 0 && selected.size === pageItems.length}
                     onChange={toggleSelectAll}
-                    className="rounded border-gray-300 dark:border-gray-600"
+                    className="rounded border-input"
                   />
                 </th>
                 <SortHeader field="url" label="URL" />
@@ -247,34 +247,34 @@ export function WebhookList({
                 <SortHeader field="successRate" label="Success Rate" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-border">
               {pageItems.map((w) => (
                 <tr
                   key={w.id}
                   onClick={() => onNavigateToDetail(w.id)}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-colors"
+                  className="hover:bg-accent cursor-pointer transition-colors"
                 >
                   <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={selected.has(w.id)}
                       onChange={() => toggleSelect(w.id)}
-                      className="rounded border-gray-300 dark:border-gray-600"
+                      className="rounded border-input"
                     />
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-900 dark:text-white font-mono truncate max-w-xs">
+                  <td className="px-4 py-3 text-sm text-foreground font-mono truncate max-w-xs">
                     {w.url}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
                     {w.events.length} event{w.events.length !== 1 ? "s" : ""}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={w.enabled ? "active" : "inactive"} />
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
                     {w.lastDeliveryAt ? <RelativeTime date={w.lastDeliveryAt} /> : "Never"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                  <td className="px-4 py-3 text-sm text-muted-foreground">
                     {w.successRate != null ? `${w.successRate}%` : "N/A"}
                   </td>
                 </tr>

@@ -27,7 +27,7 @@ const typeIcons: Record<string, React.ReactNode> = {
 };
 
 function getIcon(type: string): React.ReactNode {
-  return typeIcons[type] || <Info className="h-4 w-4 text-gray-500" />;
+  return typeIcons[type] || <Info className="h-4 w-4 text-muted-foreground" />;
 }
 
 function formatTimeAgo(dateStr: string): string {
@@ -86,12 +86,12 @@ export function NotificationBell({
     <div className="relative">
       <button
         onClick={handleClick}
-        className="relative p-2 rounded-full hover:bg-gray-100 transition-colors"
+        className="relative p-2 rounded-full hover:bg-accent transition-colors"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ""}`}
       >
-        <Bell className="h-5 w-5 text-gray-600" />
+        <Bell className="h-5 w-5 text-foreground" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 min-w-[20px] px-1 text-xs font-bold text-white bg-red-500 rounded-full">
+          <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 min-w-[20px] px-1 text-xs font-bold text-primary-foreground bg-primary rounded-full">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -172,13 +172,13 @@ function NotificationPopover({
   return (
     <div
       ref={popoverRef}
-      className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden"
+      className="absolute right-0 top-full mt-2 w-80 bg-popover text-popover-foreground border border-border rounded-lg shadow-lg z-50 overflow-hidden"
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+        <h3 className="text-sm font-semibold text-foreground">Notifications</h3>
         <button
           onClick={handleMarkAllRead}
-          className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+          className="flex items-center gap-1 text-xs text-primary hover:text-primary/80"
         >
           <Check className="h-3 w-3" />
           Mark all read
@@ -187,32 +187,32 @@ function NotificationPopover({
 
       <div className="max-h-96 overflow-y-auto">
         {loading ? (
-          <div className="p-4 text-center text-sm text-gray-500">Loading...</div>
+          <div className="p-4 text-center text-sm text-muted-foreground">Loading...</div>
         ) : notifications.length === 0 ? (
-          <div className="p-4 text-center text-sm text-gray-500">No notifications</div>
+          <div className="p-4 text-center text-sm text-muted-foreground">No notifications</div>
         ) : (
           notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                !notification.read ? "bg-blue-50/50" : ""
+              className={`px-4 py-3 border-b border-border hover:bg-accent transition-colors ${
+                !notification.read ? "bg-primary/5" : ""
               }`}
             >
               <div className="flex items-start gap-3">
                 <div className="mt-0.5">{getIcon(notification.type)}</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {notification.title}
                   </p>
-                  <p className="text-xs text-gray-600 mt-0.5 line-clamp-2">
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
                     {notification.message}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {formatTimeAgo(notification.created_at)}
                   </p>
                 </div>
                 {!notification.read && (
-                  <div className="h-2 w-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0" />
+                  <div className="h-2 w-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
                 )}
               </div>
             </div>

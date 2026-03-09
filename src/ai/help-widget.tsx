@@ -103,12 +103,12 @@ export function HelpWidget({
   return (
     <div className="fixed bottom-4 right-4 z-50">
       {isOpen ? (
-        <div className="w-80 sm:w-96 h-[500px] bg-white border border-gray-200 rounded-lg shadow-xl flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 bg-blue-600 text-white">
+        <div className="w-80 sm:w-96 h-[500px] bg-card border border-border rounded-lg shadow-xl flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground">
             <h3 className="text-sm font-semibold">Help & Support</h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 hover:bg-blue-700 rounded transition-colors"
+              className="p-1 hover:bg-primary/80 rounded transition-colors"
               aria-label="Close help widget"
             >
               <X className="h-4 w-4" />
@@ -117,8 +117,8 @@ export function HelpWidget({
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.length === 0 && (
-              <div className="text-center text-sm text-gray-500 mt-8">
-                <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+              <div className="text-center text-sm text-muted-foreground mt-8">
+                <MessageCircle className="h-8 w-8 mx-auto mb-2 text-muted-foreground/50" />
                 <p>How can we help you today?</p>
               </div>
             )}
@@ -131,8 +131,8 @@ export function HelpWidget({
                 <div
                   className={`max-w-[80%] px-3 py-2 rounded-lg text-sm ${
                     msg.role === "user"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-900"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground"
                   }`}
                 >
                   {msg.content}
@@ -142,8 +142,8 @@ export function HelpWidget({
 
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                  <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                <div className="bg-muted px-3 py-2 rounded-lg">
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               </div>
             )}
@@ -152,8 +152,8 @@ export function HelpWidget({
           </div>
 
           {showNps && npsRating === null && (
-            <div className="px-4 py-2 border-t border-gray-100 bg-gray-50">
-              <p className="text-xs text-gray-600 mb-1">
+            <div className="px-4 py-2 border-t border-border bg-muted">
+              <p className="text-xs text-muted-foreground mb-1">
                 How helpful was this? Rate 1-5:
               </p>
               <div className="flex gap-1">
@@ -161,7 +161,7 @@ export function HelpWidget({
                   <button
                     key={rating}
                     onClick={() => handleNpsClick(rating)}
-                    className="p-1 hover:text-yellow-500 text-gray-300 transition-colors"
+                    className="p-1 hover:text-yellow-500 text-muted-foreground/50 transition-colors"
                     aria-label={`Rate ${rating} stars`}
                   >
                     <Star className="h-4 w-4" />
@@ -172,14 +172,14 @@ export function HelpWidget({
           )}
 
           {npsRating !== null && (
-            <div className="px-4 py-2 border-t border-gray-100 bg-gray-50">
-              <p className="text-xs text-gray-600">
+            <div className="px-4 py-2 border-t border-border bg-muted">
+              <p className="text-xs text-muted-foreground">
                 Thanks for your feedback! ({npsRating}/5)
               </p>
             </div>
           )}
 
-          <div className="p-3 border-t border-gray-200">
+          <div className="p-3 border-t border-border">
             <div className="flex gap-2">
               <input
                 ref={inputRef}
@@ -188,13 +188,13 @@ export function HelpWidget({
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Type your question..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-input rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                 disabled={loading}
               />
               <button
                 onClick={handleSend}
                 disabled={loading || !input.trim()}
-                className="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="p-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 aria-label="Send message"
               >
                 <Send className="h-4 w-4" />
@@ -205,7 +205,7 @@ export function HelpWidget({
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors hover:scale-105"
+          className="p-3 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-colors hover:scale-105"
           aria-label="Open help widget"
         >
           <MessageCircle className="h-6 w-6" />

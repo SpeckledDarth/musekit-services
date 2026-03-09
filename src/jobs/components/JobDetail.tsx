@@ -88,15 +88,15 @@ export function JobDetail({
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Job Detail</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 font-mono mt-1">{job.id}</p>
+          <h1 className="text-2xl font-bold text-foreground">Job Detail</h1>
+          <p className="text-sm text-muted-foreground font-mono mt-1">{job.id}</p>
         </div>
         <div className="flex items-center gap-3">
           {job.status === "failed" && (
             <button
               onClick={handleRetry}
               disabled={retrying}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
               {retrying ? "Retrying..." : "Retry Job"}
             </button>
@@ -112,87 +112,87 @@ export function JobDetail({
           )}
           <button
             onClick={onBack}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             Back
           </button>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Information</h2>
+      <div className="bg-card rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Information</h2>
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Job ID</dt>
-            <dd className="text-sm font-mono text-gray-900 dark:text-white">{job.id}</dd>
+            <dt className="text-sm text-muted-foreground">Job ID</dt>
+            <dd className="text-sm font-mono text-foreground">{job.id}</dd>
           </div>
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Type</dt>
-            <dd className="text-sm font-medium text-gray-900 dark:text-white">{job.type}</dd>
+            <dt className="text-sm text-muted-foreground">Type</dt>
+            <dd className="text-sm font-medium text-foreground">{job.type}</dd>
           </div>
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+            <dt className="text-sm text-muted-foreground">Status</dt>
             <dd><StatusBadge status={job.status} /></dd>
           </div>
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Created</dt>
-            <dd className="text-sm text-gray-900 dark:text-white" title={formatTimestamp(job.createdAt)}>
+            <dt className="text-sm text-muted-foreground">Created</dt>
+            <dd className="text-sm text-foreground" title={formatTimestamp(job.createdAt)}>
               <RelativeTime date={job.createdAt} />
             </dd>
           </div>
           {job.processedAt && (
             <div>
-              <dt className="text-sm text-gray-500 dark:text-gray-400">Processed</dt>
-              <dd className="text-sm text-gray-900 dark:text-white" title={formatTimestamp(job.processedAt)}>
+              <dt className="text-sm text-muted-foreground">Processed</dt>
+              <dd className="text-sm text-foreground" title={formatTimestamp(job.processedAt)}>
                 <RelativeTime date={job.processedAt} />
               </dd>
             </div>
           )}
           {job.completedAt && (
             <div>
-              <dt className="text-sm text-gray-500 dark:text-gray-400">Completed</dt>
-              <dd className="text-sm text-gray-900 dark:text-white" title={formatTimestamp(job.completedAt)}>
+              <dt className="text-sm text-muted-foreground">Completed</dt>
+              <dd className="text-sm text-foreground" title={formatTimestamp(job.completedAt)}>
                 <RelativeTime date={job.completedAt} />
               </dd>
             </div>
           )}
           {job.failedAt && (
             <div>
-              <dt className="text-sm text-gray-500 dark:text-gray-400">Failed</dt>
-              <dd className="text-sm text-gray-900 dark:text-white" title={formatTimestamp(job.failedAt)}>
+              <dt className="text-sm text-muted-foreground">Failed</dt>
+              <dd className="text-sm text-foreground" title={formatTimestamp(job.failedAt)}>
                 <RelativeTime date={job.failedAt} />
               </dd>
             </div>
           )}
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Attempts</dt>
-            <dd className="text-sm text-gray-900 dark:text-white">{job.attempts.length}/{job.maxAttempts}</dd>
+            <dt className="text-sm text-muted-foreground">Attempts</dt>
+            <dd className="text-sm text-foreground">{job.attempts.length}/{job.maxAttempts}</dd>
           </div>
         </dl>
       </div>
 
       {job.data && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Job Data</h2>
-          <pre className="text-sm bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-auto max-h-64 text-gray-800 dark:text-gray-200">
+        <div className="bg-card rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Job Data</h2>
+          <pre className="text-sm bg-muted p-4 rounded-lg overflow-auto max-h-64 text-foreground">
             {JSON.stringify(job.data, null, 2)}
           </pre>
         </div>
       )}
 
       {(job.errorMessage || job.stackTrace) && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="bg-card rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-4">Error Details</h2>
           {job.errorMessage && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Message</h3>
+              <h3 className="text-sm font-medium text-foreground">Message</h3>
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">{job.errorMessage}</p>
             </div>
           )}
           {job.stackTrace && (
             <div>
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Stack Trace</h3>
-              <pre className="mt-1 text-xs bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-auto max-h-64 whitespace-pre-wrap text-gray-800 dark:text-gray-200">
+              <h3 className="text-sm font-medium text-foreground">Stack Trace</h3>
+              <pre className="mt-1 text-xs bg-muted p-4 rounded-lg overflow-auto max-h-64 whitespace-pre-wrap text-foreground">
                 {job.stackTrace}
               </pre>
             </div>
@@ -201,21 +201,21 @@ export function JobDetail({
       )}
 
       {job.attempts.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Attempt History</h2>
+        <div className="bg-card rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Attempt History</h2>
           <div className="space-y-3">
             {job.attempts.map((attempt) => (
               <div
                 key={attempt.attemptNumber}
-                className="flex items-start gap-4 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg"
+                className="flex items-start gap-4 p-3 bg-muted rounded-lg"
               >
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground border border-border">
                   {attempt.attemptNumber}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <StatusBadge status={attempt.outcome === "completed" ? "success" : "failed"} />
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       <RelativeTime date={attempt.timestamp} />
                     </span>
                   </div>

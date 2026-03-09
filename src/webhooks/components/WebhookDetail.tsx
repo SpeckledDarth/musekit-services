@@ -181,7 +181,7 @@ export function WebhookDetail({
   const SortHeader = ({ field, label }: { field: DeliverySortField; label: string }) => (
     <th
       onClick={() => handleSort(field)}
-      className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-700 dark:hover:text-gray-200 select-none"
+      className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider cursor-pointer hover:text-foreground select-none"
     >
       {label} {sortField === field && (sortDir === "asc" ? "\u2191" : "\u2193")}
     </th>
@@ -198,7 +198,7 @@ export function WebhookDetail({
       <Breadcrumbs items={defaultBreadcrumbs} />
 
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white truncate max-w-lg">
+        <h1 className="text-2xl font-bold text-foreground truncate max-w-lg">
           {webhook.url}
         </h1>
         <div className="flex items-center gap-3">
@@ -211,7 +211,7 @@ export function WebhookDetail({
           </button>
           <button
             onClick={() => onEdit(webhook.id)}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             Edit
           </button>
@@ -224,42 +224,42 @@ export function WebhookDetail({
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Configuration</h2>
+      <div className="bg-card rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">Configuration</h2>
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">URL</dt>
-            <dd className="text-sm font-mono text-gray-900 dark:text-white break-all">{webhook.url}</dd>
+            <dt className="text-sm text-muted-foreground">URL</dt>
+            <dd className="text-sm font-mono text-foreground break-all">{webhook.url}</dd>
           </div>
           {webhook.description && (
             <div>
-              <dt className="text-sm text-gray-500 dark:text-gray-400">Description</dt>
-              <dd className="text-sm text-gray-900 dark:text-white">{webhook.description}</dd>
+              <dt className="text-sm text-muted-foreground">Description</dt>
+              <dd className="text-sm text-foreground">{webhook.description}</dd>
             </div>
           )}
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Status</dt>
+            <dt className="text-sm text-muted-foreground">Status</dt>
             <dd><StatusBadge status={webhook.enabled ? "active" : "inactive"} /></dd>
           </div>
           <div>
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Events</dt>
+            <dt className="text-sm text-muted-foreground">Events</dt>
             <dd className="flex flex-wrap gap-1">
               {webhook.events.map((e) => (
-                <span key={e} className="inline-flex px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded">
+                <span key={e} className="inline-flex px-2 py-0.5 text-xs bg-muted text-muted-foreground rounded">
                   {e}
                 </span>
               ))}
             </dd>
           </div>
           <div className="md:col-span-2">
-            <dt className="text-sm text-gray-500 dark:text-gray-400">Signing Secret</dt>
+            <dt className="text-sm text-muted-foreground">Signing Secret</dt>
             <dd className="flex items-center gap-2 mt-1">
-              <code className="text-sm font-mono text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-900 px-2 py-1 rounded">
+              <code className="text-sm font-mono text-foreground bg-muted px-2 py-1 rounded">
                 {secretVisible ? webhook.secret : "\u2022".repeat(24)}
               </code>
               <button
                 onClick={() => setSecretVisible(!secretVisible)}
-                className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                className="text-xs text-primary hover:text-primary/80"
               >
                 {secretVisible ? "Hide" : "Reveal"}
               </button>
@@ -275,23 +275,23 @@ export function WebhookDetail({
           </h3>
           <div className="mt-2 text-sm space-y-1">
             {testResult.httpStatus && (
-              <p className="text-gray-700 dark:text-gray-300">HTTP Status: {testResult.httpStatus}</p>
+              <p className="text-muted-foreground">HTTP Status: {testResult.httpStatus}</p>
             )}
             {testResult.responseTimeMs != null && (
-              <p className="text-gray-700 dark:text-gray-300">Response Time: {testResult.responseTimeMs}ms</p>
+              <p className="text-muted-foreground">Response Time: {testResult.responseTimeMs}ms</p>
             )}
             {testResult.error && (
               <div>
                 <p className="text-red-700 dark:text-red-400">Error: {testResult.error}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Common causes: SSL certificate issues, DNS resolution failure, endpoint timeout, or invalid URL.
                 </p>
               </div>
             )}
             {testResult.responseBody && (
               <details className="mt-2">
-                <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer">Response Body</summary>
-                <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-900 p-2 rounded overflow-auto max-h-40">
+                <summary className="text-xs text-muted-foreground cursor-pointer">Response Body</summary>
+                <pre className="mt-1 text-xs bg-muted p-2 rounded overflow-auto max-h-40">
                   {testResult.responseBody}
                 </pre>
               </details>
@@ -302,8 +302,8 @@ export function WebhookDetail({
 
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Delivery History {!loading && <span className="text-sm font-normal text-gray-500 dark:text-gray-400">({filtered.length})</span>}
+          <h2 className="text-lg font-semibold text-foreground">
+            Delivery History {!loading && <span className="text-sm font-normal text-muted-foreground">({filtered.length})</span>}
           </h2>
           <FilterDropdown
             label="Status"
@@ -325,9 +325,9 @@ export function WebhookDetail({
             description="Send a test webhook to see delivery results here."
           />
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="bg-card rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-muted">
                 <tr>
                   <SortHeader field="event" label="Event" />
                   <SortHeader field="timestamp" label="Timestamp" />
@@ -337,21 +337,21 @@ export function WebhookDetail({
                   <th className="px-4 py-3 w-20" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-border">
                 {pageItems.map((d) => (
                   <React.Fragment key={d.id}>
                     <tr
                       onClick={() => setExpandedId(expandedId === d.id ? null : d.id)}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-colors"
+                      className="hover:bg-accent cursor-pointer transition-colors"
                     >
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white">{d.event}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-foreground">{d.event}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
                         <RelativeTime date={d.timestamp} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
                         {d.httpStatus ?? "N/A"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
                         {d.responseTimeMs != null ? `${d.responseTimeMs}ms` : "N/A"}
                       </td>
                       <td className="px-4 py-3">
@@ -362,7 +362,7 @@ export function WebhookDetail({
                           <button
                             onClick={() => handleRetry(d.id)}
                             disabled={retrying === d.id}
-                            className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 disabled:opacity-50"
+                            className="text-xs text-primary hover:text-primary/80 disabled:opacity-50"
                           >
                             {retrying === d.id ? "Retrying..." : "Retry"}
                           </button>
@@ -371,34 +371,34 @@ export function WebhookDetail({
                     </tr>
                     {expandedId === d.id && (
                       <tr>
-                        <td colSpan={6} className="px-4 py-4 bg-gray-50 dark:bg-gray-900">
+                        <td colSpan={6} className="px-4 py-4 bg-muted">
                           <div className="space-y-3 text-sm">
                             {d.error && (
                               <div>
                                 <h4 className="font-medium text-red-700 dark:text-red-400">Error</h4>
-                                <p className="text-gray-600 dark:text-gray-400">{d.error}</p>
+                                <p className="text-muted-foreground">{d.error}</p>
                               </div>
                             )}
                             {d.requestHeaders && (
                               <div>
-                                <h4 className="font-medium text-gray-700 dark:text-gray-300">Request Headers</h4>
-                                <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto max-h-32">
+                                <h4 className="font-medium text-foreground">Request Headers</h4>
+                                <pre className="mt-1 text-xs bg-muted p-2 rounded overflow-auto max-h-32">
                                   {JSON.stringify(d.requestHeaders, null, 2)}
                                 </pre>
                               </div>
                             )}
                             {d.requestBody && (
                               <div>
-                                <h4 className="font-medium text-gray-700 dark:text-gray-300">Request Body</h4>
-                                <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto max-h-32">
+                                <h4 className="font-medium text-foreground">Request Body</h4>
+                                <pre className="mt-1 text-xs bg-muted p-2 rounded overflow-auto max-h-32">
                                   {(() => { try { return JSON.stringify(JSON.parse(d.requestBody), null, 2); } catch { return d.requestBody; } })()}
                                 </pre>
                               </div>
                             )}
                             {d.responseBody && (
                               <div>
-                                <h4 className="font-medium text-gray-700 dark:text-gray-300">Response Body</h4>
-                                <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto max-h-32">
+                                <h4 className="font-medium text-foreground">Response Body</h4>
+                                <pre className="mt-1 text-xs bg-muted p-2 rounded overflow-auto max-h-32">
                                   {(() => { try { return JSON.stringify(JSON.parse(d.responseBody), null, 2); } catch { return d.responseBody; } })()}
                                 </pre>
                               </div>

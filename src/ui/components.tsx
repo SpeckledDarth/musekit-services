@@ -27,20 +27,20 @@ export function ConfirmDialog({
 
   const confirmClass =
     variant === "danger"
-      ? "bg-red-600 hover:bg-red-700 text-white"
+      ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
       : variant === "warning"
         ? "bg-yellow-600 hover:bg-yellow-700 text-white"
-        : "bg-blue-600 hover:bg-blue-700 text-white";
+        : "bg-primary hover:bg-primary/90 text-primary-foreground";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{message}</p>
+      <div className="bg-card rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        <p className="mt-2 text-sm text-muted-foreground">{message}</p>
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             {cancelLabel}
           </button>
@@ -67,9 +67,9 @@ export function LoadingSkeleton({ rows = 5, columns = 4, type = "table" }: Loadi
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-6 animate-pulse">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4" />
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+          <div key={i} className="bg-card rounded-lg p-6 animate-pulse">
+            <div className="h-4 bg-muted rounded w-1/2 mb-4" />
+            <div className="h-8 bg-muted rounded w-3/4" />
           </div>
         ))}
       </div>
@@ -81,8 +81,8 @@ export function LoadingSkeleton({ rows = 5, columns = 4, type = "table" }: Loadi
       <div className="space-y-6 animate-pulse">
         {Array.from({ length: rows }).map((_, i) => (
           <div key={i}>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2" />
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+            <div className="h-4 bg-muted rounded w-1/4 mb-2" />
+            <div className="h-10 bg-muted rounded w-full" />
           </div>
         ))}
       </div>
@@ -91,11 +91,11 @@ export function LoadingSkeleton({ rows = 5, columns = 4, type = "table" }: Loadi
 
   return (
     <div className="animate-pulse">
-      <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded mb-2" />
+      <div className="h-10 bg-muted rounded mb-2" />
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex gap-4 mb-2">
           {Array.from({ length: columns }).map((_, j) => (
-            <div key={j} className="h-8 bg-gray-100 dark:bg-gray-800 rounded flex-1" />
+            <div key={j} className="h-8 bg-muted rounded flex-1" />
           ))}
         </div>
       ))}
@@ -116,15 +116,15 @@ export interface EmptyStateProps {
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      {icon && <div className="text-gray-400 dark:text-gray-500 mb-4">{icon}</div>}
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white">{title}</h3>
+      {icon && <div className="text-muted-foreground mb-4">{icon}</div>}
+      <h3 className="text-lg font-medium text-foreground">{title}</h3>
       {description && (
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 max-w-sm">{description}</p>
+        <p className="mt-1 text-sm text-muted-foreground max-w-sm">{description}</p>
       )}
       {action && (
         <button
           onClick={action.onClick}
-          className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+          className="mt-4 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition-colors"
         >
           {action.label}
         </button>
@@ -144,19 +144,19 @@ export interface BreadcrumbsProps {
 
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
-    <nav className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+    <nav className="flex items-center text-sm text-muted-foreground mb-4">
       {items.map((item, i) => (
         <React.Fragment key={i}>
           {i > 0 && <span className="mx-2">/</span>}
           {item.onClick ? (
             <button
               onClick={item.onClick}
-              className="hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="hover:text-foreground transition-colors"
             >
               {item.label}
             </button>
           ) : (
-            <span className="text-gray-900 dark:text-white font-medium">{item.label}</span>
+            <span className="text-foreground font-medium">{item.label}</span>
           )}
         </React.Fragment>
       ))}
@@ -191,21 +191,21 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className="px-3 py-1 text-sm rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        className="px-3 py-1 text-sm rounded-md bg-muted text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
       >
         Prev
       </button>
       {pages.map((p, i) =>
         p === "..." ? (
-          <span key={`ellipsis-${i}`} className="px-2 text-gray-400">...</span>
+          <span key={`ellipsis-${i}`} className="px-2 text-muted-foreground">...</span>
         ) : (
           <button
             key={p}
             onClick={() => onPageChange(p)}
             className={`px-3 py-1 text-sm rounded-md transition-colors ${
               p === page
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground hover:bg-accent"
             }`}
           >
             {p}
@@ -215,7 +215,7 @@ export function Pagination({ page, totalPages, onPageChange }: PaginationProps) 
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        className="px-3 py-1 text-sm rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+        className="px-3 py-1 text-sm rounded-md bg-muted text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent transition-colors"
       >
         Next
       </button>
@@ -235,7 +235,7 @@ export function StatusBadge({ status, label }: StatusBadgeProps) {
     active: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
     processing: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
     failed: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-    inactive: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400",
+    inactive: "bg-muted text-muted-foreground",
     waiting: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
   };
 
@@ -285,7 +285,7 @@ export function SearchInput({ value, onChange, placeholder = "Search...", deboun
       value={local}
       onChange={handleChange}
       placeholder={placeholder}
-      className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full max-w-xs"
+      className="px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent w-full max-w-xs"
     />
   );
 }
@@ -300,11 +300,11 @@ export interface FilterDropdownProps {
 export function FilterDropdown({ label, value, options, onChange }: FilterDropdownProps) {
   return (
     <div className="flex items-center gap-2">
-      <label className="text-sm text-gray-600 dark:text-gray-400">{label}:</label>
+      <label className="text-sm text-muted-foreground">{label}:</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -326,17 +326,17 @@ export function BulkActionBar({ selectedCount, actions, onClearSelection }: Bulk
   if (selectedCount === 0) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-lg shadow-xl">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-4 px-6 py-3 bg-popover text-popover-foreground rounded-lg shadow-xl border border-border">
       <span className="text-sm font-medium">{selectedCount} selected</span>
-      <div className="w-px h-6 bg-gray-600" />
+      <div className="w-px h-6 bg-border" />
       {actions.map((action, i) => (
         <button
           key={i}
           onClick={action.onClick}
           className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
             action.variant === "danger"
-              ? "bg-red-600 hover:bg-red-700"
-              : "bg-blue-600 hover:bg-blue-700"
+              ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+              : "bg-primary hover:bg-primary/90 text-primary-foreground"
           }`}
         >
           {action.label}
@@ -344,7 +344,7 @@ export function BulkActionBar({ selectedCount, actions, onClearSelection }: Bulk
       ))}
       <button
         onClick={onClearSelection}
-        className="px-3 py-1.5 text-sm text-gray-300 hover:text-white transition-colors"
+        className="px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
         Clear
       </button>

@@ -154,13 +154,13 @@ export function WebhookEditor({
     <div className="max-w-2xl space-y-6">
       <Breadcrumbs items={defaultBreadcrumbs} />
 
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+      <h1 className="text-2xl font-bold text-foreground">
         {isEdit ? "Edit Webhook" : "Add Webhook"}
       </h1>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-6">
+      <div className="bg-card rounded-lg shadow p-6 space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             Endpoint URL <span className="text-red-500">*</span>
           </label>
           <input
@@ -168,15 +168,15 @@ export function WebhookEditor({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://example.com/webhooks"
-            className={`w-full px-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.url ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+            className={`w-full px-3 py-2 text-sm border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring ${
+              errors.url ? "border-red-500" : "border-input"
             }`}
           />
           {errors.url && <p className="mt-1 text-xs text-red-500">{errors.url}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             Description
           </label>
           <input
@@ -184,27 +184,27 @@ export function WebhookEditor({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Optional description"
-            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Event Types <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
             {availableEvents.map((event) => (
               <label
                 key={event}
-                className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                className="flex items-center gap-2 p-2 rounded-md hover:bg-accent cursor-pointer"
               >
                 <input
                   type="checkbox"
                   checked={events.has(event)}
                   onChange={() => toggleEvent(event)}
-                  className="rounded border-gray-300 dark:border-gray-600 text-blue-600"
+                  className="rounded border-input text-primary"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">{event}</span>
+                <span className="text-sm text-foreground">{event}</span>
               </label>
             ))}
           </div>
@@ -212,7 +212,7 @@ export function WebhookEditor({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-foreground mb-1">
             Signing Secret
           </label>
           <div className="flex items-center gap-2">
@@ -220,26 +220,26 @@ export function WebhookEditor({
               type={secretVisible ? "text" : "password"}
               value={secret}
               readOnly
-              className="flex-1 px-3 py-2 text-sm font-mono border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white"
+              className="flex-1 px-3 py-2 text-sm font-mono border border-input rounded-md bg-muted text-foreground"
             />
             <button
               type="button"
               onClick={() => setSecretVisible(!secretVisible)}
-              className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="px-3 py-2 text-sm text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
             >
               {secretVisible ? "Hide" : "Show"}
             </button>
             <button
               type="button"
               onClick={handleCopySecret}
-              className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="px-3 py-2 text-sm text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
             >
               {copied ? "Copied!" : "Copy"}
             </button>
             <button
               type="button"
               onClick={regenerateSecret}
-              className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              className="px-3 py-2 text-sm text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
             >
               Regenerate
             </button>
@@ -247,18 +247,18 @@ export function WebhookEditor({
         </div>
 
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="text-sm font-medium text-foreground">
             Active
           </label>
           <button
             type="button"
             onClick={() => setEnabled(!enabled)}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              enabled ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"
+              enabled ? "bg-primary" : "bg-muted"
             }`}
           >
             <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${
                 enabled ? "translate-x-6" : "translate-x-1"
               }`}
             />
@@ -280,14 +280,14 @@ export function WebhookEditor({
         <div className="flex items-center gap-3">
           <button
             onClick={handleCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? "Saving..." : isEdit ? "Update Webhook" : "Create Webhook"}
           </button>

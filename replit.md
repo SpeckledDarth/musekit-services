@@ -81,7 +81,7 @@ Code references map to real Supabase tables as follows:
 ## UI Component Pattern
 All admin UI components use callback function props for server-side actions (same pattern as NotificationBell). The consuming app wires API routes to these callbacks. Components use:
 - `"use client"` directive
-- Tailwind CSS with dark mode (`dark:` classes)
+- Tailwind CSS with CSS variable-based semantic classes (bg-card, text-foreground, bg-muted, etc.) — no hardcoded gray/white color classes
 - Sonner for toast notifications
 - STANDARD E UX patterns (skeletons, empty states, pagination, CSV export, bulk ops, breadcrumbs, confirmation dialogs, form validation, relative timestamps)
 

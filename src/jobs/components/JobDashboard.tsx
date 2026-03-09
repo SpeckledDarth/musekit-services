@@ -146,7 +146,7 @@ export function JobDashboard({
   }
 
   const statCards = [
-    { label: "Total (24h)", value: stats?.total24h ?? 0, color: "text-gray-900 dark:text-white" },
+    { label: "Total (24h)", value: stats?.total24h ?? 0, color: "text-foreground" },
     { label: "Active", value: stats?.active ?? 0, color: "text-blue-600 dark:text-blue-400" },
     { label: "Completed", value: stats?.completed ?? 0, color: "text-green-600 dark:text-green-400" },
     { label: "Failed", value: stats?.failed ?? 0, color: "text-red-600 dark:text-red-400" },
@@ -158,20 +158,20 @@ export function JobDashboard({
       <Breadcrumbs items={defaultBreadcrumbs} />
 
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Background Jobs</h1>
+        <h1 className="text-2xl font-bold text-foreground">Background Jobs</h1>
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={autoRefresh}
               onChange={(e) => setAutoRefresh(e.target.checked)}
-              className="rounded border-gray-300 dark:border-gray-600"
+              className="rounded border-input"
             />
             Auto-refresh (30s)
           </label>
           <button
             onClick={loadAll}
-            className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-3 py-2 text-sm text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             Refresh
           </button>
@@ -180,8 +180,8 @@ export function JobDashboard({
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {statCards.map((card) => (
-          <div key={card.label} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">{card.label}</p>
+          <div key={card.label} className="bg-card rounded-lg shadow p-4">
+            <p className="text-sm text-muted-foreground">{card.label}</p>
             <p className={`text-2xl font-bold ${card.color}`}>{card.value.toLocaleString()}</p>
           </div>
         ))}
@@ -189,31 +189,31 @@ export function JobDashboard({
 
       {typeBreakdown.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Job Types</h2>
+          <h2 className="text-lg font-semibold text-foreground mb-3">Job Types</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {typeBreakdown.map((tb) => (
-              <div key={tb.type} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white">{tb.type}</h3>
+              <div key={tb.type} className="bg-card rounded-lg shadow p-4">
+                <h3 className="text-sm font-medium text-foreground">{tb.type}</h3>
                 <div className="mt-2 grid grid-cols-3 gap-2 text-center">
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
-                    <p className="text-lg font-semibold text-gray-900 dark:text-white">{tb.total}</p>
+                    <p className="text-xs text-muted-foreground">Total</p>
+                    <p className="text-lg font-semibold text-foreground">{tb.total}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Success</p>
+                    <p className="text-xs text-muted-foreground">Success</p>
                     <p className="text-lg font-semibold text-green-600 dark:text-green-400">{tb.completed}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Failed</p>
+                    <p className="text-xs text-muted-foreground">Failed</p>
                     <p className="text-lg font-semibold text-red-600 dark:text-red-400">{tb.failed}</p>
                   </div>
                 </div>
                 <div className="mt-2">
-                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Success Rate</span>
                     <span>{tb.successRate}%</span>
                   </div>
-                  <div className="mt-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="mt-1 h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-green-500 rounded-full transition-all"
                       style={{ width: `${tb.successRate}%` }}
@@ -228,12 +228,12 @@ export function JobDashboard({
 
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Recent Failures <span className="text-sm font-normal text-gray-500 dark:text-gray-400">({failures.length})</span>
+          <h2 className="text-lg font-semibold text-foreground">
+            Recent Failures <span className="text-sm font-normal text-muted-foreground">({failures.length})</span>
           </h2>
           <button
             onClick={handleExportFailures}
-            className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="px-3 py-2 text-sm text-muted-foreground bg-muted rounded-md hover:bg-accent transition-colors"
           >
             Export CSV
           </button>
@@ -245,19 +245,19 @@ export function JobDashboard({
             description="All jobs are running smoothly."
           />
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+          <div className="bg-card rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-border">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Job Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Created</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Failed</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Error</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Attempts</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Job Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Created</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Failed</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Error</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Attempts</th>
                   <th className="px-4 py-3 w-20" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-border">
                 {pageFailures.map((f) => (
                   <React.Fragment key={f.id}>
                     <tr
@@ -265,26 +265,26 @@ export function JobDashboard({
                         if (onNavigateToDetail) onNavigateToDetail(f.id);
                         else setExpandedId(expandedId === f.id ? null : f.id);
                       }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-750 cursor-pointer transition-colors"
+                      className="hover:bg-accent cursor-pointer transition-colors"
                     >
-                      <td className="px-4 py-3 text-sm text-gray-900 dark:text-white font-medium">{f.type}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-foreground font-medium">{f.type}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
                         <RelativeTime date={f.createdAt} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
                         <RelativeTime date={f.failedAt} />
                       </td>
                       <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 truncate max-w-xs">
                         {f.errorMessage}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
                         {f.attempts}/{f.maxAttempts}
                       </td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => handleRetry(f.id)}
                           disabled={retrying === f.id}
-                          className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 disabled:opacity-50"
+                          className="text-xs text-primary hover:text-primary/80 disabled:opacity-50"
                         >
                           {retrying === f.id ? "Retrying..." : "Retry"}
                         </button>
@@ -292,24 +292,24 @@ export function JobDashboard({
                     </tr>
                     {expandedId === f.id && (
                       <tr>
-                        <td colSpan={6} className="px-4 py-4 bg-gray-50 dark:bg-gray-900">
+                        <td colSpan={6} className="px-4 py-4 bg-muted">
                           <div className="space-y-3 text-sm">
                             <div>
-                              <h4 className="font-medium text-gray-700 dark:text-gray-300">Error Message</h4>
+                              <h4 className="font-medium text-foreground">Error Message</h4>
                               <p className="text-red-600 dark:text-red-400">{f.errorMessage}</p>
                             </div>
                             {f.stackTrace && (
                               <div>
-                                <h4 className="font-medium text-gray-700 dark:text-gray-300">Stack Trace</h4>
-                                <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto max-h-40 whitespace-pre-wrap">
+                                <h4 className="font-medium text-foreground">Stack Trace</h4>
+                                <pre className="mt-1 text-xs bg-muted p-2 rounded overflow-auto max-h-40 whitespace-pre-wrap">
                                   {f.stackTrace}
                                 </pre>
                               </div>
                             )}
                             {f.data && (
                               <div>
-                                <h4 className="font-medium text-gray-700 dark:text-gray-300">Job Data</h4>
-                                <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto max-h-40">
+                                <h4 className="font-medium text-foreground">Job Data</h4>
+                                <pre className="mt-1 text-xs bg-muted p-2 rounded overflow-auto max-h-40">
                                   {JSON.stringify(f.data, null, 2)}
                                 </pre>
                               </div>
