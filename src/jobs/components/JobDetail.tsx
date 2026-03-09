@@ -105,7 +105,7 @@ export function JobDetail({
             <button
               onClick={() => setConfirmCancel(true)}
               disabled={cancelling}
-              className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-danger bg-danger/10 rounded-md hover:bg-danger/20 disabled:opacity-50 transition-colors"
             >
               Cancel Job
             </button>
@@ -182,11 +182,11 @@ export function JobDetail({
 
       {(job.errorMessage || job.stackTrace) && (
         <div className="bg-card rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-red-700 dark:text-red-400 mb-4">Error Details</h2>
+          <h2 className="text-lg font-semibold text-danger mb-4">Error Details</h2>
           {job.errorMessage && (
             <div className="mb-4">
               <h3 className="text-sm font-medium text-foreground">Message</h3>
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{job.errorMessage}</p>
+              <p className="mt-1 text-sm text-danger">{job.errorMessage}</p>
             </div>
           )}
           {job.stackTrace && (
@@ -220,7 +220,7 @@ export function JobDetail({
                     </span>
                   </div>
                   {attempt.error && (
-                    <p className="mt-1 text-sm text-red-600 dark:text-red-400 truncate">{attempt.error}</p>
+                    <p className="mt-1 text-sm text-danger truncate">{attempt.error}</p>
                   )}
                 </div>
               </div>

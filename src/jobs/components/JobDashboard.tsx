@@ -148,9 +148,9 @@ export function JobDashboard({
   const statCards = [
     { label: "Total (24h)", value: stats?.total24h ?? 0, color: "text-foreground" },
     { label: "Active", value: stats?.active ?? 0, color: "text-blue-600 dark:text-blue-400" },
-    { label: "Completed", value: stats?.completed ?? 0, color: "text-green-600 dark:text-green-400" },
-    { label: "Failed", value: stats?.failed ?? 0, color: "text-red-600 dark:text-red-400" },
-    { label: "Waiting", value: stats?.waiting ?? 0, color: "text-yellow-600 dark:text-yellow-400" },
+    { label: "Completed", value: stats?.completed ?? 0, color: "text-success" },
+    { label: "Failed", value: stats?.failed ?? 0, color: "text-danger" },
+    { label: "Waiting", value: stats?.waiting ?? 0, color: "text-warning" },
   ];
 
   return (
@@ -201,11 +201,11 @@ export function JobDashboard({
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Success</p>
-                    <p className="text-lg font-semibold text-green-600 dark:text-green-400">{tb.completed}</p>
+                    <p className="text-lg font-semibold text-success">{tb.completed}</p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Failed</p>
-                    <p className="text-lg font-semibold text-red-600 dark:text-red-400">{tb.failed}</p>
+                    <p className="text-lg font-semibold text-danger">{tb.failed}</p>
                   </div>
                 </div>
                 <div className="mt-2">
@@ -215,7 +215,7 @@ export function JobDashboard({
                   </div>
                   <div className="mt-1 h-2 bg-muted rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-green-500 rounded-full transition-all"
+                      className="h-full bg-success rounded-full transition-all"
                       style={{ width: `${tb.successRate}%` }}
                     />
                   </div>
@@ -274,7 +274,7 @@ export function JobDashboard({
                       <td className="px-4 py-3 text-sm text-muted-foreground">
                         <RelativeTime date={f.failedAt} />
                       </td>
-                      <td className="px-4 py-3 text-sm text-red-600 dark:text-red-400 truncate max-w-xs">
+                      <td className="px-4 py-3 text-sm text-danger truncate max-w-xs">
                         {f.errorMessage}
                       </td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
@@ -296,7 +296,7 @@ export function JobDashboard({
                           <div className="space-y-3 text-sm">
                             <div>
                               <h4 className="font-medium text-foreground">Error Message</h4>
-                              <p className="text-red-600 dark:text-red-400">{f.errorMessage}</p>
+                              <p className="text-danger">{f.errorMessage}</p>
                             </div>
                             {f.stackTrace && (
                               <div>

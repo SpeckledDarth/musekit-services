@@ -205,7 +205,7 @@ export function WebhookDetail({
           <button
             onClick={handleTest}
             disabled={testing}
-            className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm font-medium bg-success text-success-foreground rounded-md hover:bg-success/90 disabled:opacity-50 transition-colors"
           >
             {testing ? "Testing..." : "Test Webhook"}
           </button>
@@ -217,7 +217,7 @@ export function WebhookDetail({
           </button>
           <button
             onClick={() => setConfirmDeleteOpen(true)}
-            className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-danger bg-danger/10 rounded-md hover:bg-danger/20 transition-colors"
           >
             Delete
           </button>
@@ -269,8 +269,8 @@ export function WebhookDetail({
       </div>
 
       {testResult && (
-        <div className={`rounded-lg p-4 ${testResult.success ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800" : "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"}`}>
-          <h3 className={`text-sm font-semibold ${testResult.success ? "text-green-800 dark:text-green-400" : "text-red-800 dark:text-red-400"}`}>
+        <div className={`rounded-lg p-4 ${testResult.success ? "bg-success/10 border border-success/20" : "bg-danger/10 border border-danger/20"}`}>
+          <h3 className={`text-sm font-semibold ${testResult.success ? "text-success" : "text-danger"}`}>
             Test Result: {testResult.success ? "Success" : "Failed"}
           </h3>
           <div className="mt-2 text-sm space-y-1">
@@ -282,7 +282,7 @@ export function WebhookDetail({
             )}
             {testResult.error && (
               <div>
-                <p className="text-red-700 dark:text-red-400">Error: {testResult.error}</p>
+                <p className="text-danger">Error: {testResult.error}</p>
                 <p className="text-xs text-muted-foreground mt-1">
                   Common causes: SSL certificate issues, DNS resolution failure, endpoint timeout, or invalid URL.
                 </p>
@@ -375,7 +375,7 @@ export function WebhookDetail({
                           <div className="space-y-3 text-sm">
                             {d.error && (
                               <div>
-                                <h4 className="font-medium text-red-700 dark:text-red-400">Error</h4>
+                                <h4 className="font-medium text-danger">Error</h4>
                                 <p className="text-muted-foreground">{d.error}</p>
                               </div>
                             )}

@@ -161,7 +161,7 @@ export function WebhookEditor({
       <div className="bg-card rounded-lg shadow p-6 space-y-6">
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
-            Endpoint URL <span className="text-red-500">*</span>
+            Endpoint URL <span className="text-danger">*</span>
           </label>
           <input
             type="url"
@@ -169,10 +169,10 @@ export function WebhookEditor({
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://example.com/webhooks"
             className={`w-full px-3 py-2 text-sm border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring ${
-              errors.url ? "border-red-500" : "border-input"
+              errors.url ? "border-danger" : "border-input"
             }`}
           />
-          {errors.url && <p className="mt-1 text-xs text-red-500">{errors.url}</p>}
+          {errors.url && <p className="mt-1 text-xs text-danger">{errors.url}</p>}
         </div>
 
         <div>
@@ -190,7 +190,7 @@ export function WebhookEditor({
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">
-            Event Types <span className="text-red-500">*</span>
+            Event Types <span className="text-danger">*</span>
           </label>
           <div className="grid grid-cols-2 gap-2">
             {availableEvents.map((event) => (
@@ -208,7 +208,7 @@ export function WebhookEditor({
               </label>
             ))}
           </div>
-          {errors.events && <p className="mt-1 text-xs text-red-500">{errors.events}</p>}
+          {errors.events && <p className="mt-1 text-xs text-danger">{errors.events}</p>}
         </div>
 
         <div>
@@ -271,7 +271,7 @@ export function WebhookEditor({
           {isEdit && onDelete && (
             <button
               onClick={() => setConfirmDeleteOpen(true)}
-              className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-danger hover:text-danger/80 transition-colors"
             >
               Delete Webhook
             </button>

@@ -20,9 +20,9 @@ interface NotificationBellProps {
 
 const typeIcons: Record<string, React.ReactNode> = {
   info: <Info className="h-4 w-4 text-blue-500" />,
-  warning: <AlertTriangle className="h-4 w-4 text-yellow-500" />,
-  success: <CheckCircle className="h-4 w-4 text-green-500" />,
-  error: <XCircle className="h-4 w-4 text-red-500" />,
+  warning: <AlertTriangle className="h-4 w-4 text-warning" />,
+  success: <CheckCircle className="h-4 w-4 text-success" />,
+  error: <XCircle className="h-4 w-4 text-danger" />,
   message: <MessageSquare className="h-4 w-4 text-purple-500" />,
 };
 

@@ -161,7 +161,7 @@ export function HelpWidget({
                   <button
                     key={rating}
                     onClick={() => handleNpsClick(rating)}
-                    className="p-1 hover:text-yellow-500 text-muted-foreground/50 transition-colors"
+                    className="p-1 hover:text-warning text-muted-foreground/50 transition-colors"
                     aria-label={`Rate ${rating} stars`}
                   >
                     <Star className="h-4 w-4" />

@@ -29,7 +29,7 @@ export function ConfirmDialog({
     variant === "danger"
       ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
       : variant === "warning"
-        ? "bg-yellow-600 hover:bg-yellow-700 text-white"
+        ? "bg-warning hover:bg-warning/90 text-warning-foreground"
         : "bg-primary hover:bg-primary/90 text-primary-foreground";
 
   return (
@@ -230,13 +230,13 @@ export interface StatusBadgeProps {
 
 export function StatusBadge({ status, label }: StatusBadgeProps) {
   const colors: Record<string, string> = {
-    success: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
-    completed: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+    success: "bg-success/10 text-success",
+    completed: "bg-success/10 text-success",
     active: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
     processing: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-    failed: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
+    failed: "bg-danger/10 text-danger",
     inactive: "bg-muted text-muted-foreground",
-    waiting: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+    waiting: "bg-warning/10 text-warning",
   };
 
   const displayLabel = label || status.charAt(0).toUpperCase() + status.slice(1);

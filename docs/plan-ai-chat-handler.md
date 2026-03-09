@@ -17,6 +17,7 @@
 | 2.0 | 2026-03-05 | Agent | Fix table names + complete processors (5-fix batch) |
 | 3.0 | 2026-03-06 | Agent | Webhook management UI + Background job dashboard + client-safe entry point |
 | 3.1 | 2026-03-09 | Agent | CSS variable migration: replaced ~242 hardcoded Tailwind color classes with semantic CSS variable classes across 8 component files |
+| 3.2 | 2026-03-09 | Agent | Status color migration: replaced ~30 hardcoded green/red/yellow classes with semantic success/danger/warning classes across 7 files |
 
 ---
 
