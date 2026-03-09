@@ -1,0 +1,156 @@
+Prompt 45: musekit-services — CSS Variable Migration (Shared UI, Skeletons, Notifications, AI Widget)
+Module Repl
+musekit-services (GitHub: SpeckledDarth/musekit-services)
+
+Context
+The services package provides shared UI components (modals, pagination, breadcrumbs), loading skeletons, notification components (bell + popover), and the AI help widget. These are used across multiple sections of the app. Currently they use ~30+ hardcoded Tailwind colors and hardcoded skeleton styling. After Prompt 38 (ThemeInjector) and Prompt 39 (shared Tailwind preset), all CSS variables are available.
+
+Reference: See docs/current/css-variable-contract.md for the complete list of available CSS variables, their types, defaults, and recommended Tailwind class replacements.
+
+Current State (verified March 9, 2026)
+No Tailwind Config
+packages/services/ does NOT have its own tailwind.config.ts.
+
+Shared UI Components (src/ui/components.tsx) — 28 hardcoded refs
+Contains ~28 hardcoded references. Components include:
+
+Modals — bg-white, bg-gray-* backgrounds
+Pagination — hardcoded button colors
+Breadcrumbs — hardcoded text grays
+LoadingSkeleton (lines 71-98) — bg-gray-200, bg-gray-100 hardcoded
+Notification Components (src/notifications/components.tsx) — 12 hardcoded refs
+NotificationBell — hardcoded styling
+NotificationPopover — hardcoded grays for notification list
+AI Help Widget (src/ai/help-widget.tsx) — 13 hardcoded refs
+Floating chat button and panel — hardcoded colors for the chat interface
+Input field: border-gray-300, focus:ring-blue-500
+Message bubbles: bg-gray-100 text-gray-900
+Feedback section: border-gray-100 bg-gray-50, text-gray-600, text-gray-300
+Job Dashboard Components (NOT in original prompt — CRITICAL GAP)
+src/jobs/components/JobDashboard.tsx — 37 hardcoded refs:
+
+Card backgrounds: bg-white dark:bg-gray-800
+Text colors: text-gray-900 dark:text-white, text-gray-500 dark:text-gray-400, text-gray-600 dark:text-gray-300
+Buttons: bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600
+Table: bg-gray-50 dark:bg-gray-900 for thead, hover:bg-gray-50 for rows
+Progress bar: bg-gray-200 dark:bg-gray-700
+Checkboxes: border-gray-300 dark:border-gray-600
+src/jobs/components/JobDetail.tsx — 32 hardcoded refs:
+
+Same patterns as JobDashboard: bg-white, bg-gray-*, text-gray-*, border-gray-*
+Webhook Components (NOT in original prompt — CRITICAL GAP)
+src/webhooks/components/WebhookDetail.tsx — 36 hardcoded refs:
+
+Detail panel: bg-white, bg-gray-*, text-gray-*, border-gray-*
+Status indicators with hardcoded colors
+src/webhooks/components/WebhookEditor.tsx — 20 hardcoded refs:
+
+Form fields: bg-white, border-gray-*, text-gray-*
+src/webhooks/components/WebhookList.tsx — 13 hardcoded refs:
+
+List items: bg-white, text-gray-*, border-gray-*
+The Fix
+1. Migrate Shared UI Components
+All components in src/ui/components.tsx:
+
+Modal backgrounds: bg-white → bg-background or bg-card, dark:bg-gray-* → dark:bg-card
+Modal overlays: keep semi-transparent but use bg-black/50 (this is fine, it's a universal overlay)
+Pagination buttons: hardcoded grays → bg-background, active: bg-primary text-primary-foreground, hover: hover:bg-accent
+Breadcrumb text: text-gray-500 → text-muted-foreground, active: text-foreground
+Breadcrumb separator: text-gray-400 → text-muted-foreground
+All borders: border-gray-* → border-border
+2. Fix Loading Skeletons
+LoadingSkeleton component: Replace:
+
+bg-gray-200 → bg-muted
+bg-gray-100 → bg-muted
+animate-pulse → keep as-is OR add CSS variable integration: animation: var(--skeleton-animation, pulse)
+The --skeleton-animation CSS variable has values pulse, shimmer, or static. To integrate:
+
+If pulse: use standard animate-pulse
+If shimmer: use a shimmer gradient animation
+If static: no animation
+The simplest approach is to just ensure skeleton elements use bg-muted instead of bg-gray-*, and leave the animation handling to a CSS class that reads --skeleton-animation. If implementing the full animation switch is complex, at minimum replace the hardcoded grays.
+
+3. Migrate Notification Components
+NotificationBell:
+
+Bell icon color: text-gray-* → text-foreground
+Badge (unread count): hardcoded color → bg-primary text-primary-foreground
+NotificationPopover:
+
+Popover background: bg-white → bg-popover text-popover-foreground
+Border: border-gray-* → border-border
+Notification item hover: hover:bg-gray-* → hover:bg-accent
+Read/unread styling: unread items could use subtle bg-primary/5 tint
+Timestamp text: text-gray-400 → text-muted-foreground
+4. Migrate AI Help Widget
+help-widget.tsx:
+
+Floating button: hardcoded bg → bg-primary text-primary-foreground
+Chat panel background: bg-white → bg-card
+Chat panel border: border-gray-* → border-border
+Message bubbles: user messages → bg-primary text-primary-foreground, AI messages → bg-muted text-foreground
+Input field: border-gray-300 → border-input, focus:ring-blue-500 → focus:ring-ring
+Feedback section: bg-gray-50 → bg-muted, text-gray-600 → text-muted-foreground
+5. Migrate Job Dashboard Components (CRITICAL — 69 refs across 2 files)
+JobDashboard.tsx (37 refs):
+
+Card backgrounds: bg-white dark:bg-gray-800 → bg-card
+Table header: bg-gray-50 dark:bg-gray-900 → bg-muted
+Row hover: hover:bg-gray-50 → hover:bg-accent
+Text: text-gray-900 dark:text-white → text-foreground, text-gray-500 dark:text-gray-400 → text-muted-foreground
+Buttons: bg-gray-100 dark:bg-gray-700 → bg-muted, hover:bg-gray-200 → hover:bg-accent
+Progress bar background: bg-gray-200 dark:bg-gray-700 → bg-muted
+Checkboxes: border-gray-300 → border-input
+JobDetail.tsx (32 refs):
+
+Same replacement patterns as JobDashboard
+Detail panels: bg-white → bg-card, border-gray-* → border-border
+All text grays → semantic equivalents
+6. Migrate Webhook Components (CRITICAL — 69 refs across 3 files)
+WebhookDetail.tsx (36 refs):
+
+Detail panel: bg-white → bg-card, border-gray-* → border-border
+Status indicators: hardcoded green/red → text-success / text-danger
+Text: text-gray-* → text-foreground / text-muted-foreground
+WebhookEditor.tsx (20 refs):
+
+Form fields: bg-white → bg-background, border-gray-* → border-input
+Labels: text-gray-* → text-foreground / text-muted-foreground
+WebhookList.tsx (13 refs):
+
+List items: bg-white → bg-card, border-gray-* → border-border
+Text: text-gray-* → text-foreground / text-muted-foreground
+What NOT to Do
+Do NOT change any job processing logic, queue handling, or service layer code
+Do NOT change the Supabase client or API logic
+Do NOT change component APIs or export signatures
+Do NOT modify any non-UI files (processors, jobs, etc.)
+Do NOT create a tailwind.config.ts for this package
+Verification Checklist
+Hardcoded Color Elimination (ALL directories)
+ grep -r "bg-white" src/ui/ src/notifications/ src/ai/ src/jobs/ src/webhooks/ returns zero results
+ grep -r "bg-gray-" src/ui/ src/notifications/ src/ai/ src/jobs/ src/webhooks/ returns zero results
+ grep -r "text-gray-" src/ui/ src/notifications/ src/ai/ src/jobs/ src/webhooks/ returns zero results
+ grep -r "border-gray-" src/ui/ src/notifications/ src/ai/ src/jobs/ src/webhooks/ returns zero results
+Skeletons
+ LoadingSkeleton uses bg-muted instead of bg-gray-200/bg-gray-100
+Notifications
+ NotificationBell unread badge uses bg-primary
+ NotificationPopover uses bg-popover text-popover-foreground border-border
+AI Widget
+ Floating button uses bg-primary text-primary-foreground
+ Chat panel uses bg-card border-border
+ Input field uses border-input and focus:ring-ring
+Job Dashboard
+ JobDashboard.tsx uses bg-card for cards, bg-muted for table headers
+ JobDetail.tsx uses bg-card for panels, border-border for borders
+ Progress bars use bg-muted instead of bg-gray-200
+Webhook Components
+ WebhookDetail.tsx uses bg-card, border-border, text-foreground
+ WebhookEditor.tsx uses bg-background, border-input
+ WebhookList.tsx uses bg-card, border-border
+Build
+ npx tsc --noEmit passes with zero errors
+ No changes to any exports or component APIs
